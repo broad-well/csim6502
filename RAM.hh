@@ -11,28 +11,28 @@
 class RAM {
   public:
 
-  word* PtrTo(word lo, word hi = 0x00) const;
-  word Read(word lo, word hi = 0x00) const;
-  void Write(word value, word lo, word hi = 0x00);
+  byte* PtrTo(byte lo, byte hi = 0x00) const;
+  byte Read(byte lo, byte hi = 0x00) const;
+  void Write(byte value, byte lo, byte hi = 0x00);
 
   private:
 
-  virtual word* ptrTo(word lo, word hi) const = 0;
+  virtual byte* ptrTo(byte lo, byte hi) const = 0;
 };
 
 class HeapRAM : public RAM {
   public:
 
   explicit HeapRAM(size_t size);
-  HeapRAM(const word* src, size_t size);
+  HeapRAM(const byte* src, size_t size);
   ~HeapRAM();
 
   private:
 
-  word* pool;
+  byte* pool;
   size_t size;
 
-  word* ptrTo(word lo, word hi) const override;
+  byte* ptrTo(byte lo, byte hi) const override;
   void checkAddress(uint16_t address) const;
 };
 #endif //CSIM6502_RAM_HH

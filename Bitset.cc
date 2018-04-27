@@ -23,6 +23,12 @@ void Bitset::Clear(const std::size_t index) {
   CheckByteIndexRange(index);
   data &= ~(1U << index);
 }
+void Bitset::Change(std::size_t index, bool set) {
+  if (set)
+    Set(index);
+  else
+    Clear(index);
+}
 
 bool Bitset::IsSet(const std::size_t index) const {
   CheckByteIndexRange(index);

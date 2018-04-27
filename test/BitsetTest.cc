@@ -21,7 +21,7 @@ TEST(Bitset, WriteBit) {
 
   bitset.Set(2);
   bitset.Clear(1);
-  bitset.Clear(5);
+  bitset.Change(5, false);
 
   ASSERT_EQ(bitset.Data(), 0b00001101);
 }

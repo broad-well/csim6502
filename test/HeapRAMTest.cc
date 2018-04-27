@@ -8,13 +8,13 @@
 TEST(HeapRAM, PtrInRange)
 {
   HeapRAM ram(0x100);
-  ASSERT_EQ(ram.PtrTo(0x00), ram.PtrTo(0x01) - 1*sizeof(word));
+  ASSERT_EQ(ram.PtrTo(0x00), ram.PtrTo(0x01) - 1*sizeof(byte));
 }
 
 TEST(HeapRAM, ReadInRange)
 {
   constexpr auto data = "Read my RAM";
-  HeapRAM ram((word*)data, strlen(data));
+  HeapRAM ram((byte*)data, strlen(data));
 
   ASSERT_EQ(ram.Read(0x00), 'R');
   ASSERT_EQ(ram.Read(0x01), 'e');
@@ -25,7 +25,7 @@ TEST(HeapRAM, ReadInRange)
 TEST(HeapRAM, WriteInRange)
 {
   auto data = "Change my RAM";
-  HeapRAM ram((word*) data, strlen(data));
+  HeapRAM ram((byte*) data, strlen(data));
 
   ram.Write('c', 0xa);
   ram.Write('a', 0xb);

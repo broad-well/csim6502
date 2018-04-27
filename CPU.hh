@@ -10,7 +10,9 @@
 #include "types.hh"
 #include "opcode/Decoder.hh"
 #include "Bitset.hh"
+#include "RAM.hh"
 
+// C Z I D B _ V N
 enum StatusPos {
   CARRY,
   ZERO_RESULT,
@@ -24,22 +26,24 @@ enum StatusPos {
 
 struct CPU {
   // Registers
-  word
+  byte
       x,
       y,
       ac, // Accumulator
       sp, // Stack pointer
       pc; // Program counter
-  Bitset status;
 
+  Bitset status;
   Decoder decoder;
+  RAM* memory;
 
   public:
-  CPU();
-  ~CPU();
+  CPU(RAM* memory);
+  ~CPU() = default;
 
-  void UpdateFlagsFor(const word& new_value);
-  void JumpRelative(const word& offset);
+  byte* MemoryPtrTo(byte lo, byte hi = 0x00);
+  void UpdateFlagsFor(const byte& new_value);
+  void JumpRelative(const byte& offset);
 
   void DumpRegisterInfo(const std::ostream& out = std::cout) const;
 };

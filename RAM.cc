@@ -5,16 +5,17 @@
 #include <cstdint>
 #include <clocale>
 #include <stdexcept>
-#include <string>
+#include <cstring>
 #include "RAM.hh"
-word *RAM::PtrTo(const word lo, const uint8_t hi) const {
+
+byte *RAM::PtrTo(const byte lo, const uint8_t hi) const {
   return ptrTo(lo, hi);
 }
 
-word RAM::Read(const word lo, const word hi) const {
+byte RAM::Read(const byte lo, const byte hi) const {
   return *PtrTo(lo, hi);
 }
-void RAM::Write(const word value, const word lo, const word hi) {
+void RAM::Write(const byte value, const byte lo, const byte hi) {
   *ptrTo(lo, hi) = value;
 }
 
@@ -24,16 +25,16 @@ HeapRAM::HeapRAM(size_t size) : size(size) {
   pool = new uint8_t[size];
 }
 
-HeapRAM::HeapRAM(const word *src, size_t size) : HeapRAM(size)
+HeapRAM::HeapRAM(const byte *src, size_t size) : HeapRAM(size)
 {
-  memcpy(pool, src, size);
+  std::memcpy(pool, src, size);
 }
 
 HeapRAM::~HeapRAM() {
   delete[] pool;
 }
 
-uint16_t ComposeLittleEndianAddress(const word& lo, const word& hi) {
+uint16_t ComposeLittleEndianAddress(const byte& lo, const byte& hi) {
   return (hi << 8) + lo;
 }
 
@@ -43,7 +44,7 @@ void HeapRAM::checkAddress(const uint16_t address) const {
   }
 }
 
-word *HeapRAM::ptrTo(word lo, word hi) const {
+byte *HeapRAM::ptrTo(byte lo, byte hi) const {
   uint16_t address = ComposeLittleEndianAddress(lo, hi);
   checkAddress(address);
   return &pool[address];

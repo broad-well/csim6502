@@ -3,24 +3,24 @@
 //
 
 #include "CPU.hh"
-CPU::CPU() : x(0), y(0), ac(0), sp(0), pc(0), status(0b00000000) {
+CPU::CPU(RAM* memory) :
+    x(0), y(0), ac(0), sp(0), pc(0),
+    status(0b00000000), decoder(), memory(memory) {
+}
+
+byte *CPU::MemoryPtrTo(byte lo, byte hi) {
+  return memory->PtrTo(lo, hi);
+}
+
+void CPU::UpdateFlagsFor(const byte &new_value) {
+  status.Change(ZERO_RESULT, new_value==0);
+  status.Change(NEGATIVE_RESULT, new_value >= 0b10000000);
+}
+
+/*void CPU::JumpRelative(const byte &offset) {
 
 }
-CPU::~CPU() {
 
-}
-void CPU::UpdateFlagsFor(const word &new_value) {
-
-}
-void CPU::JumpRelative(const word &offset) {
-
-}
-word CPU::FetchOpCodeAtCounter() const {
-  return 0;
-}
-word &CPU::StatusFlag(const StatusPos &&position) const {
-  return
-}
 void CPU::DumpRegisterInfo(const std::ostream &out) const {
 
-}
+}*/

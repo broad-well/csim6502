@@ -17,6 +17,7 @@ class Bitset {
 
   void Set(std::size_t index);
   void Clear(std::size_t index);
+  void Change(std::size_t index, bool set);
 
   bool IsSet(std::size_t index) const;
   bool IsCleared(std::size_t index) const;
