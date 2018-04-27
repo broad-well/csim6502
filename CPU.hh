@@ -34,8 +34,8 @@ struct CPU {
       x,
       y,
       ac, // Accumulator
-      sp, // Stack pointer
-      pc_low, pc_high; // Program counter
+      sp; // Stack pointer
+  word pc; // Program counter
 
   Decoder decoder;
   StatusFlags status;
@@ -45,9 +45,13 @@ struct CPU {
   explicit CPU(RAM* memory);
   ~CPU() = default;
 
-  byte* MemoryPtrTo(byte lo, byte hi = 0x00) const;
+  byte* MemoryPtrTo(word address) const;
   void UpdateFlagsFor(const byte& new_value);
   void JumpRelative(const byte& offset);
+
+  byte& NextOpcode();
+  byte& NextOperand();
+  void IncrementProgramCounter();
 
   void DumpRegisterInfo(std::ostream& out = std::cout) const;
 };

@@ -28,7 +28,7 @@ TEST(StatusFlags, ToString) {
 
 TEST(CPU, MemoryPtr) {
   ASSERT_EQ(cpu.MemoryPtrTo(0x02), ram.PtrTo(0x02));
-  ASSERT_EQ(cpu.MemoryPtrTo(0x05, 0x02), ram.PtrTo(0x05, 0x02));
+  ASSERT_EQ(cpu.MemoryPtrTo(0x0205), ram.PtrTo(0x0205));
 }
 
 TEST(CPU, UpdateFlagsForNegative) {
@@ -53,48 +53,43 @@ TEST(CPU, UpdateFlagsForPositive) {
 }
 
 TEST(CPU, JumpRelativeForward) {
-  auto prev_pc = bit::AsWord(cpu.pc_low, cpu.pc_high);
+  auto prev_pc(cpu.pc);
 
   cpu.JumpRelative(0b00001101);
 
-  ASSERT_EQ(bit::AsWord(cpu.pc_low, cpu.pc_high), prev_pc + 0b00001101);
+  ASSERT_EQ(cpu.pc, prev_pc + 0b00001101);
 }
 
 TEST(CPU, JumpRelativeZero) {
-  auto prev_pc = bit::AsWord(cpu.pc_low, cpu.pc_high);
+  auto prev_pc(cpu.pc);
 
   cpu.JumpRelative(0);
 
-  ASSERT_EQ(bit::AsWord(cpu.pc_low, cpu.pc_high), prev_pc);
+  ASSERT_EQ(cpu.pc, prev_pc);
 }
 
 TEST(CPU, JumpRelativeBackward) {
-  cpu.pc_low = cpu.pc_high = 0x3a;
+  cpu.pc = 0x3a3a;
 
   cpu.JumpRelative(0xe6);
 
-  ASSERT_EQ(cpu.pc_low, 0x3a - 0x1a);
-  ASSERT_EQ(cpu.pc_high, 0x3a);
+  ASSERT_EQ(cpu.pc, 0x3a3a - 0x1a);
 }
 
 TEST(CPU, JumpRelativeOverflow) {
-  cpu.pc_low = cpu.pc_high = 0xf2;
+  cpu.pc = 0xf2f2;
 
   cpu.JumpRelative(0x56);
 
-  ASSERT_EQ(cpu.pc_low, 0x48);
-  ASSERT_EQ(cpu.pc_high, 0xf3);
-  ASSERT_EQ(bit::AsWord(cpu.pc_low, cpu.pc_high), 0xf348);
+  ASSERT_EQ(cpu.pc, 0xf348);
 }
 
 TEST(CPU, JumpRelativeUnderflow) {
-  cpu.pc_low = cpu.pc_high = 0x05;
+  cpu.pc = 0x0505;
 
   cpu.JumpRelative(0x96); // -106
 
-  ASSERT_EQ(cpu.pc_low, 0x9b);
-  ASSERT_EQ(cpu.pc_high, 0x04);
-  ASSERT_EQ(bit::AsWord(cpu.pc_low, cpu.pc_high), 0x0505 - 106);
+  ASSERT_EQ(cpu.pc, 0x0505 - 106);
 }
 
 TEST(CPU, DumpRegisterInfo) {
@@ -102,7 +97,7 @@ TEST(CPU, DumpRegisterInfo) {
 
   char expected[39];
   sprintf(expected, "X=%02X Y=%02X A=%02X\nSP=%02X PC=%04X\n%s",
-      cpu.x, cpu.y, cpu.ac, cpu.sp, bit::AsWord(cpu.pc_low, cpu.pc_high),
+      cpu.x, cpu.y, cpu.ac, cpu.sp, cpu.pc,
           cpu.status.ToString().c_str());
 
   std::stringstream stream;

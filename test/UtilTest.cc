@@ -25,3 +25,12 @@ TEST(Bit, BytesToWord) {
   ASSERT_EQ(AsWord(0x16, 0xfb), 0xfb16);
   ASSERT_EQ(AsWord(0x00, 0xeb), 0xeb00);
 }
+
+TEST(Bit, WordToBytes) {
+  ASSERT_EQ(LowByte(0x4adc), 0xdc);
+  ASSERT_EQ(LowByte(0xface), 0xce);
+  ASSERT_EQ(LowByte(0x0a10), 0x10);
+  ASSERT_EQ(HighByte(0xf2a6), 0xf2);
+  ASSERT_EQ(HighByte(0x01c3), 0x01);
+  ASSERT_EQ(HighByte(0x8081), 0x80);
+}

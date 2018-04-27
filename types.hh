@@ -9,4 +9,6 @@
 using byte = std::uint8_t;
 using signed_byte = std::int8_t;
 
+using word = std::uint16_t;
+
 #endif //CSIM6502_TYPES_HH
