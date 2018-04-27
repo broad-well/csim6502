@@ -19,15 +19,9 @@ TEST(Util, CustomWidthPaddedHex) {
   ASSERT_EQ(AsPaddedHex(94, 8), "0000005e");
 }
 
-TEST(Util, PositiveToSigned) {
-  ASSERT_EQ(ToSigned(127), 127);
-  ASSERT_EQ(ToSigned(31), 31);
-}
-
-TEST(Util, ZeroToSigned) {
-  ASSERT_EQ(ToSigned(0), 0);
-}
-
-TEST(Util, NegativeToSigned) {
-  ASSERT_EQ(ToSigned(0b11110111), -9);
+TEST(Bit, BytesToWord) {
+  ASSERT_EQ(AsWord(0x4d), 0x4d);
+  ASSERT_EQ(AsWord(0x91), 0x91);
+  ASSERT_EQ(AsWord(0x16, 0xfb), 0xfb16);
+  ASSERT_EQ(AsWord(0x00, 0xeb), 0xeb00);
 }

@@ -9,19 +9,23 @@
 #include <iostream>
 #include "types.hh"
 #include "opcode/Decoder.hh"
-#include "Bitset.hh"
 #include "RAM.hh"
 
 // C Z I D B _ V N
-enum StatusPos {
-  CARRY,
-  ZERO_RESULT,
-  IRQ_DISABLE,
-  DECIMAL_MODE,
-  BREAK_CMD,
-  _EXPANSION,
-  OVERFLOW,
-  NEGATIVE_RESULT,
+struct StatusFlags {
+  bool carry : 1,
+      zero_result : 1,
+      irq_disable : 1,
+      decimal_mode : 1,
+      break_command : 1,
+      _expansion : 1,
+      overflow : 1,
+      negative_result : 1;
+
+  void LoadFromByte(const byte& data);
+  void Clear();
+  byte ToByte() const;
+  std::string ToString() const;
 };
 
 struct CPU {
@@ -31,21 +35,21 @@ struct CPU {
       y,
       ac, // Accumulator
       sp, // Stack pointer
-      pc; // Program counter
+      pc_low, pc_high; // Program counter
 
-  Bitset status;
   Decoder decoder;
+  StatusFlags status;
   RAM* memory;
 
   public:
-  CPU(RAM* memory);
+  explicit CPU(RAM* memory);
   ~CPU() = default;
 
-  byte* MemoryPtrTo(byte lo, byte hi = 0x00);
+  byte* MemoryPtrTo(byte lo, byte hi = 0x00) const;
   void UpdateFlagsFor(const byte& new_value);
   void JumpRelative(const byte& offset);
 
-  void DumpRegisterInfo(const std::ostream& out = std::cout) const;
+  void DumpRegisterInfo(std::ostream& out = std::cout) const;
 };
 
 #endif //CSIM6502_CPU_HH

@@ -6,6 +6,7 @@
 #include <clocale>
 #include <stdexcept>
 #include <cstring>
+#include <string>
 #include "RAM.hh"
 
 byte *RAM::PtrTo(const byte lo, const uint8_t hi) const {

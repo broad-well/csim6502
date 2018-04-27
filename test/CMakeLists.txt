@@ -9,7 +9,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fprofile-instr-generate -fco
 include_directories(${GTEST_INCLUDE_DIRS})
 #find_package(GTest REQUIRED)
 
-set(TEST_FILES HeapRAMTest BitsetTest UtilTest CPUTest)
+set(TEST_FILES HeapRAMTest UtilTest CPUTest)
 
 foreach(testFile ${TEST_FILES})
     add_executable(${testFile} ${testFile}.cc)
