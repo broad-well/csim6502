@@ -40,5 +40,6 @@ TEST(HeapRAM, AccessOutOfRange) {
   HeapRAM ram(0x10);
 
   ASSERT_THROW(ram.PtrTo(0x10), std::out_of_range);
-  ASSERT_THROW(ram.PtrTo(0x11), std::out_of_range);
+  ASSERT_THROW(ram.Read(0x11), std::out_of_range);
+  ASSERT_THROW(ram.Write(2, 0x12), std::out_of_range);
 }

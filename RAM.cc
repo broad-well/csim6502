@@ -10,6 +10,7 @@
 #include "RAM.hh"
 
 byte *RAM::PtrTo(const word address) const {
+  checkAddress(address);
   return ptrTo(address);
 }
 
@@ -17,7 +18,7 @@ byte RAM::Read(const word address) const {
   return *PtrTo(address);
 }
 void RAM::Write(const byte value, const word address) {
-  *ptrTo(address) = value;
+  *PtrTo(address) = value;
 }
 
 
@@ -41,6 +42,5 @@ void HeapRAM::checkAddress(const uint16_t address) const {
 }
 
 byte *HeapRAM::ptrTo(const uint16_t address) const {
-  checkAddress(address);
   return &pool[address];
 }

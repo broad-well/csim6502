@@ -18,6 +18,7 @@ class RAM {
   private:
 
   virtual byte* ptrTo(word address) const = 0;
+  virtual void checkAddress(word) const {}
 };
 
 class HeapRAM : public RAM {
@@ -33,6 +34,6 @@ class HeapRAM : public RAM {
   size_t size;
 
   byte* ptrTo(word address) const override;
-  void checkAddress(word address) const;
+  void checkAddress(word address) const override;
 };
 #endif //CSIM6502_RAM_HH
