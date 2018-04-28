@@ -5,8 +5,11 @@
 #include <gtest/gtest.h>
 #include "../CPU.hh"
 #include "../Util.hh"
+#include "MockRAM.hh"
 
-HeapRAM ram(0x10000);
+MockRAM ram {
+    0x13, 0x79, 0xac, 0xde
+};
 CPU cpu(&ram);
 
 TEST(StatusFlags, ToFromByte) {
@@ -24,6 +27,8 @@ TEST(StatusFlags, ToString) {
   StatusFlags flags;
   flags.LoadFromByte(0b01110001);
   ASSERT_EQ(flags.ToString(), "nV_BdizC");
+  flags.LoadFromByte(0b10001110);
+  ASSERT_EQ(flags.ToString(), "Nv_bDIZc");
 }
 
 TEST(CPU, MemoryPtr) {
@@ -87,13 +92,13 @@ TEST(CPU, JumpRelativeOverflow) {
 TEST(CPU, JumpRelativeUnderflow) {
   cpu.pc = 0x0505;
 
-  cpu.JumpRelative(0x96); // -106
+  cpu.JumpRelative(-106);
 
   ASSERT_EQ(cpu.pc, 0x0505 - 106);
 }
 
 TEST(CPU, DumpRegisterInfo) {
-  cpu.JumpRelative(0x9e);
+  cpu.JumpRelative(static_cast<signed_byte>(0x9e));
 
   char expected[39];
   sprintf(expected, "X=%02X Y=%02X A=%02X\nSP=%02X PC=%04X\n%s",
@@ -104,4 +109,31 @@ TEST(CPU, DumpRegisterInfo) {
   cpu.DumpRegisterInfo(stream);
 
   ASSERT_EQ(stream.str(), expected);
+}
+
+TEST(CPU, IncrementProgramCounterNoOverflow) {
+  auto prev_pc(cpu.pc);
+  cpu.IncrementProgramCounter();
+  ASSERT_EQ(cpu.pc - 1, prev_pc);
+}
+
+TEST(CPU, IncrementProgramCounterOverflow) {
+  cpu.pc = 0xffff;
+  ASSERT_THROW(cpu.IncrementProgramCounter(), std::overflow_error);
+}
+
+TEST(CPU, NextCodeByte) {
+  cpu.pc = 0x00;
+  ASSERT_EQ(cpu.NextCodeByte(), ram.Read(0x00));
+  ASSERT_EQ(cpu.NextCodeByte(), ram.Read(0x01));
+  cpu.JumpRelative(1);
+  ASSERT_EQ(cpu.NextCodeByte(), ram.Read(0x03));
+  cpu.JumpRelative(-2);
+  ASSERT_EQ(cpu.NextCodeByte(), ram.Read(0x02));
+}
+
+TEST(CPU, NextOperandWord) {
+  auto expected(bit::AsWord(ram.Read(0x01), ram.Read(0x02)));
+  cpu.pc = 0x01;
+  ASSERT_EQ(cpu.NextOperandWord(), expected);
 }

@@ -49,8 +49,8 @@ void CPU::UpdateFlagsFor(const byte &new_value) {
   status.negative_result = new_value >= 0b10000000;
 }
 
-void CPU::JumpRelative(const byte &offset) {
-  pc += (signed_byte) offset;
+void CPU::JumpRelative(const signed_byte offset) {
+  pc += offset;
 }
 
 void CPU::DumpRegisterInfo(std::ostream &out) const {
@@ -60,4 +60,23 @@ void CPU::DumpRegisterInfo(std::ostream &out) const {
       x, y, ac, sp, pc, status.ToString().c_str());
 
   out << out_str;
+}
+
+void CPU::IncrementProgramCounter() {
+  if (pc == 0xffff)
+    throw std::overflow_error("Incrementing Program Counter (PC) at 0xffff causes overflow");
+  ++pc;
+}
+
+byte CPU::NextCodeByte() {
+  byte opcode(memory->Read(pc));
+  IncrementProgramCounter();
+  return opcode;
+}
+
+word CPU::NextOperandWord() {
+  byte low(NextCodeByte()),
+    high(NextCodeByte());
+
+  return bit::AsWord(low, high);
 }

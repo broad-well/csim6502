@@ -42,15 +42,19 @@ struct CPU {
   RAM* memory;
 
   public:
+
   explicit CPU(RAM* memory);
   ~CPU() = default;
 
   byte* MemoryPtrTo(word address) const;
   void UpdateFlagsFor(const byte& new_value);
-  void JumpRelative(const byte& offset);
+  void JumpRelative(signed_byte offset);
 
-  byte& NextOpcode();
-  byte& NextOperand();
+  // For opcodes and operands
+  byte NextCodeByte();
+  // For indirect & absolute addressing
+  word NextOperandWord();
+
   void IncrementProgramCounter();
 
   void DumpRegisterInfo(std::ostream& out = std::cout) const;
