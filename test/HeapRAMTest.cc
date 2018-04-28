@@ -27,9 +27,9 @@ TEST(HeapRAM, WriteInRange)
   auto data = "Change my RAM";
   HeapRAM ram((byte*) data, strlen(data));
 
-  ram.Write('c', 0xa);
-  ram.Write('a', 0xb);
-  ram.Write('r', 0xc);
+  ram.Write(0xa, 'c');
+  ram.Write(0xb, 'a');
+  ram.Write(0xc, 'r');
 
   ASSERT_EQ(ram.Read(0xa), 'c');
   ASSERT_EQ(ram.Read(0xb), 'a');
@@ -41,7 +41,7 @@ TEST(HeapRAM, AccessOutOfRange) {
 
   ASSERT_THROW(ram.PtrTo(0x10), std::out_of_range);
   ASSERT_THROW(ram.Read(0x11), std::out_of_range);
-  ASSERT_THROW(ram.Write(2, 0x12), std::out_of_range);
+  ASSERT_THROW(ram.Write(0x12, 2), std::out_of_range);
 }
 
 TEST(HeapRAM, ReadWord) {

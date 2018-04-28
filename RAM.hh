@@ -11,15 +11,15 @@
 class RAM {
   public:
 
-  byte* PtrTo(word address) const;
-  byte Read(word address) const;
-  word ReadWord(word address) const;
-  void Write(byte value, word address);
-  byte* PtrToIndirectTarget(word given_address) const;
+  byte* PtrTo(word address);
+  byte Read(word address);
+  word ReadWord(word address);
+  void Write(word address, byte value);
+  byte* PtrToIndirectTarget(word given_address);
 
   private:
 
-  virtual byte* ptrTo(word address) const = 0;
+  virtual byte* ptrTo(word address) = 0;
   virtual void checkAddress(word) const {}
 };
 
@@ -35,7 +35,7 @@ class HeapRAM : public RAM {
   byte* pool;
   size_t size;
 
-  byte* ptrTo(word address) const override;
+  byte* ptrTo(word address) override;
   void checkAddress(word address) const override;
 };
 #endif //CSIM6502_RAM_HH

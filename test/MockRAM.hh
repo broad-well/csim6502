@@ -7,6 +7,7 @@
 
 #include <cstddef>
 #include <cstdlib>
+#include <map>
 #include "../RAM.hh"
 #include "../types.hh"
 
@@ -24,12 +25,16 @@ class MockRAM : public RAM {
   private:
 
   byte* data;
+  std::map<word, byte> written_data;
   const size_t size;
 
-  byte* ptrTo(word address) const override {
-    return address < size ?
-            &data[address] :
-            data;
+  byte* ptrTo(word address) override {
+    if (address >= size)
+      return &written_data[address];
+    else
+      return address < size ?
+              &data[address] :
+              data;
   }
   void checkAddress(word) const override {}
 };

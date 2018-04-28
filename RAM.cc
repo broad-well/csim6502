@@ -10,21 +10,21 @@
 #include "RAM.hh"
 #include "Util.hh"
 
-byte *RAM::PtrTo(const word address) const {
+byte *RAM::PtrTo(const word address) {
   checkAddress(address);
   return ptrTo(address);
 }
 
-byte RAM::Read(const word address) const {
+byte RAM::Read(const word address) {
   return *PtrTo(address);
 }
-void RAM::Write(const byte value, const word address) {
+void RAM::Write(const word address, const byte value) {
   *PtrTo(address) = value;
 }
-byte *RAM::PtrToIndirectTarget(word given_address) const {
+byte *RAM::PtrToIndirectTarget(word given_address) {
   return PtrTo(ReadWord(given_address));
 }
-word RAM::ReadWord(word address) const {
+word RAM::ReadWord(word address) {
   // Little endian
   byte low(Read(address)),
       high(Read(address + (word)sizeof(byte)));
@@ -51,6 +51,6 @@ void HeapRAM::checkAddress(const uint16_t address) const {
   }
 }
 
-byte *HeapRAM::ptrTo(const uint16_t address) const {
+byte *HeapRAM::ptrTo(const uint16_t address) {
   return &pool[address];
 }
