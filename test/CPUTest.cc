@@ -142,3 +142,28 @@ TEST(CPU, NextOperandWord) {
   cpu.pc = 0x01;
   ASSERT_EQ(cpu.NextOperandWord(), expected);
 }
+
+TEST(CPU, StackPushPull) {
+  cpu.PushByteToStack(0x4a);
+  cpu.PushWordToStack(0xfb);
+  cpu.PushWordToStack(0xf3ca);
+
+  ASSERT_EQ(cpu.PullWordFromStack(), 0xf3ca);
+  ASSERT_EQ(cpu.PullWordFromStack(), 0xfb);
+  ASSERT_EQ(cpu.PullByteFromStack(), 0x4a);
+}
+
+TEST(CPU, StackOverflow) {
+  for (size_t i = 0; i < 0xFF; ++i) {
+    cpu.PushByteToStack(0x4d);
+  }
+  ASSERT_THROW(cpu.PushByteToStack(0x2d), std::overflow_error);
+
+  for (size_t i = 0; i < 0xFF; ++i) {
+    ASSERT_EQ(cpu.PullByteFromStack(), 0x4d);
+  }
+}
+
+TEST(CPU, StackUnderflow) {
+  ASSERT_THROW(cpu.PullByteFromStack(), std::underflow_error);
+}

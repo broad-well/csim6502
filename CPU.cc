@@ -5,6 +5,9 @@
 #include "CPU.hh"
 #include "Util.hh"
 
+constexpr word kStackFirst(0x01FF);
+constexpr word kStackLast(0x0100);
+
 void StatusFlags::LoadFromByte(const byte &data) {
   memcpy(this, &data, sizeof(StatusFlags));
 }
@@ -34,7 +37,7 @@ std::string StatusFlags::ToString() const {
 }
 
 CPU::CPU(RAM* memory) :
-    x(0), y(0), ac(0), sp(0), pc(0),
+    x(0), y(0), ac(0), pc(0), sp(kStackFirst),
     decoder(), status(), memory(memory) {
 
   status.Clear();
@@ -80,6 +83,33 @@ byte CPU::NextCodeByte() {
 word CPU::NextOperandWord() {
   byte low(NextCodeByte()),
     high(NextCodeByte());
+
+  return bit::AsWord(low, high);
+}
+
+void CPU::PushByteToStack(byte value) {
+  if (sp == kStackLast)
+    throw std::overflow_error("Attempt to push byte onto full stack");
+
+  memory->Write(sp--, value);
+}
+void CPU::PushWordToStack(word value) {
+  byte low(bit::LowByte(value)),
+      high(bit::HighByte(value));
+
+  PushByteToStack(high);
+  PushByteToStack(low);
+}
+
+byte CPU::PullByteFromStack() {
+  if (sp == kStackFirst)
+    throw std::underflow_error("Attempt to pull byte from empty stack");
+
+  return memory->Read(++sp);
+}
+word CPU::PullWordFromStack() {
+  byte low(PullByteFromStack()),
+      high(PullByteFromStack());
 
   return bit::AsWord(low, high);
 }

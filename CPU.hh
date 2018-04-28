@@ -33,9 +33,10 @@ struct CPU {
   byte
       x,
       y,
-      ac, // Accumulator
+      ac; // Accumulator
+  word
+      pc, // Program counter
       sp; // Stack pointer
-  word pc; // Program counter
 
   Decoder decoder;
   StatusFlags status;
@@ -55,6 +56,11 @@ struct CPU {
   byte NextCodeByte();
   // For indirect & absolute addressing
   word NextOperandWord();
+
+  void PushByteToStack(byte value);
+  void PushWordToStack(word value);
+  byte PullByteFromStack();
+  word PullWordFromStack();
 
   void IncrementProgramCounter();
 
