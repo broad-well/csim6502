@@ -8,6 +8,7 @@
 #include <cstring>
 #include <string>
 #include "RAM.hh"
+#include "Util.hh"
 
 byte *RAM::PtrTo(const word address) const {
   checkAddress(address);
@@ -20,7 +21,16 @@ byte RAM::Read(const word address) const {
 void RAM::Write(const byte value, const word address) {
   *PtrTo(address) = value;
 }
+byte *RAM::PtrToIndirectTarget(word given_address) const {
+  return PtrTo(ReadWord(given_address));
+}
+word RAM::ReadWord(word address) const {
+  // Little endian
+  byte low(Read(address)),
+      high(Read(address + (word)sizeof(byte)));
 
+  return bit::AsWord(low, high);
+}
 
 HeapRAM::HeapRAM(size_t size) : size(size) {
   pool = new uint8_t[size];

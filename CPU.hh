@@ -46,7 +46,8 @@ struct CPU {
   explicit CPU(RAM* memory);
   ~CPU() = default;
 
-  byte* MemoryPtrTo(word address) const;
+  byte* AbsoluteMemoryPtrTo(word address) const;
+  byte* ZeroPageMemoryPtrTo(byte low_address) const;
   void UpdateFlagsFor(const byte& new_value);
   void JumpRelative(signed_byte offset);
 

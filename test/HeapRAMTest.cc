@@ -43,3 +43,26 @@ TEST(HeapRAM, AccessOutOfRange) {
   ASSERT_THROW(ram.Read(0x11), std::out_of_range);
   ASSERT_THROW(ram.Write(2, 0x12), std::out_of_range);
 }
+
+TEST(HeapRAM, ReadWord) {
+  byte data[] {
+    0x03, 0x15, 0xaf, 0x4d, 0xb3, 0x9e
+  };
+  HeapRAM ram(data, 6);
+
+  ASSERT_EQ(ram.ReadWord(0x00), 0x1503);
+  ASSERT_EQ(ram.ReadWord(0x04), 0x9eb3);
+  ASSERT_THROW(ram.ReadWord(0x05), std::out_of_range);
+}
+
+TEST(HeapRAM, PtrToIndirectTarget) {
+  byte data[] {
+      0x4a, 0xa3, 0x81, 0x02, 0x00, 0x00, 0x04
+  };
+  HeapRAM ram(data, 7);
+
+  ASSERT_EQ(ram.PtrToIndirectTarget(0x03), ram.PtrTo(0x02));
+  ASSERT_EQ(ram.PtrToIndirectTarget(0x04), ram.PtrTo(0x00));
+  ASSERT_THROW(ram.PtrToIndirectTarget(0x05), std::out_of_range);
+  ASSERT_THROW(ram.PtrToIndirectTarget(0x06), std::out_of_range);
+}

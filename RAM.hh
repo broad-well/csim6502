@@ -13,7 +13,9 @@ class RAM {
 
   byte* PtrTo(word address) const;
   byte Read(word address) const;
+  word ReadWord(word address) const;
   void Write(byte value, word address);
+  byte* PtrToIndirectTarget(word given_address) const;
 
   private:
 
