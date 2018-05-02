@@ -10,6 +10,13 @@
 #include "RAM.hh"
 #include "Util.hh"
 
+byte Hook::loadFrom(RAM &src, word address) const {
+  return src.readStoredValue(address);
+}
+void Hook::storeTo(RAM &src, word address, byte value) const {
+  src.storeValue(address, value);
+}
+
 byte RAM::Read(const word address) {
 
   auto hook = FindHook(address);
@@ -17,7 +24,7 @@ byte RAM::Read(const word address) {
     return (*hook)->OnRead(*this, address);
 
   checkAddress(address);
-  return *ptrTo(address);
+  return readStoredValue(address);
 }
 
 void RAM::Write(const word address, const byte value) {
@@ -29,12 +36,12 @@ void RAM::Write(const word address, const byte value) {
   }
 
   checkAddress(address);
-  *ptrTo(address) = value;
+  storeValue(address, value);
 }
-
 byte RAM::ReadIndirectTarget(word given_address) {
   return Read(ReadWord(given_address));
 }
+
 void RAM::WriteIndirectTarget(word given_address, byte value) {
   Write(ReadWord(given_address), value);
 }
@@ -46,13 +53,13 @@ word RAM::ReadWord(word address) {
 
   return bit::AsWord(low, high);
 }
-
 void RAM::AddHook(Hook *newHook) {
   hooks.emplace(newHook);
 }
 void RAM::ClearHooks() {
   hooks.clear();
 }
+
 const std::unique_ptr<Hook> *RAM::FindHook(word address) {
   for (auto& hook : hooks)
     if (hook->ShouldAddressAccessRedirect(address))
@@ -78,7 +85,9 @@ void HeapRAM::checkAddress(const uint16_t address) const {
     throw std::out_of_range("Address out of range: " + std::to_string(address));
   }
 }
-
-byte *HeapRAM::ptrTo(const uint16_t address) {
-  return &pool[address];
+byte HeapRAM::readStoredValue(word address) {
+  return pool[address];
+}
+void HeapRAM::storeValue(word address, byte value) {
+  pool[address] = value;
 }

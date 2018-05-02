@@ -28,14 +28,19 @@ class MockRAM : public RAM {
   std::map<word, byte> written_data;
   const size_t size;
 
-  byte* ptrTo(word address) override {
+  byte readStoredValue(word address) override {
     if (address >= size)
-      return &written_data[address];
+      return written_data[address];
     else
-      return address < size ?
-              &data[address] :
-              data;
+      return data[address];
   }
+  void storeValue(word address, byte value) override {
+    if (address >= size)
+      written_data[address] = value;
+    else
+      data[address] = value;
+  }
+
   void checkAddress(word) const override {}
 };
 

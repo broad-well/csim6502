@@ -28,6 +28,19 @@ class MockHook : public Hook {
   MOCK_CONST_METHOD3(OnWrite, void(RAM& caller, word address, byte value));
 };
 
+class TransparentHook : public Hook {
+  public:
+
+  bool ShouldAddressAccessRedirect(word address) const override {
+    return address >= kAddressRangeMin && address <= kAddressRangeMax;
+  }
+  byte OnRead(RAM& caller, word address) const override {
+    return loadFrom(caller, address);
+  }
+  void OnWrite(RAM& caller, word address, byte value) const override {
+    storeTo(caller, address, value);
+  }
+};
 
 TEST(RAM, HookRedirection) {
   auto hook = new StrictMock<MockHook>;
@@ -55,4 +68,13 @@ TEST(RAM, HookOverride) {
   ram.ClearHooks();
   ASSERT_EQ(ram.Read(0x05), 0xfa);
   ASSERT_EQ(ram.Read(0x07), 0xfe);
+}
+
+TEST(RAM, DirectStoreLoad) {
+  auto hook = new TransparentHook;
+  ram.AddHook(hook);
+
+  ram.Write(0x02, 0x04);
+  ASSERT_EQ(ram.Read(0x02), 0x04);
+  ASSERT_EQ(ram.Read(0x04), 0x4e);
 }

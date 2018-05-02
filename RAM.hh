@@ -21,6 +21,11 @@ class Hook {
 
   virtual byte OnRead(RAM &caller, word address) const = 0;
   virtual void OnWrite(RAM &caller, word address, byte value) const = 0;
+
+  protected:
+
+  byte loadFrom(RAM &src, word address) const;
+  void storeTo(RAM &src, word address, byte value) const;
 };
 
 class RAM {
@@ -39,9 +44,13 @@ class RAM {
   private:
   std::unordered_set<std::unique_ptr<Hook>> hooks;
 
-  const std::unique_ptr<Hook> * FindHook(word address);
-  virtual byte *ptrTo(word address) = 0;
+  const std::unique_ptr<Hook> *FindHook(word address);
+
+  virtual byte readStoredValue(word address) = 0;
+  virtual void storeValue(word address, byte value) = 0;
   virtual void checkAddress(word) const {}
+
+  friend class Hook;
 };
 
 class HeapRAM : public RAM {
@@ -56,7 +65,8 @@ class HeapRAM : public RAM {
   byte *pool;
   size_t size;
 
-  byte *ptrTo(word address) override;
+  byte readStoredValue(word address) override;
+  void storeValue(word address, byte value) override;
   void checkAddress(word address) const override;
 };
 #endif //CSIM6502_RAM_HH
