@@ -31,16 +31,6 @@ TEST(StatusFlags, ToString) {
   ASSERT_EQ(flags.ToString(), "Nv_bDIZc");
 }
 
-TEST(CPU, AbsoluteMemoryPtr) {
-  ASSERT_EQ(cpu.AbsoluteMemoryPtrTo(0x02), ram.PtrTo(0x02));
-  ASSERT_EQ(cpu.AbsoluteMemoryPtrTo(0x0205), ram.PtrTo(0x0205));
-}
-
-TEST(CPU, ZeroPageMemoryPtr) {
-  ASSERT_EQ(cpu.ZeroPageMemoryPtrTo(0xf4), ram.PtrTo(0xf4));
-  ASSERT_EQ(cpu.ZeroPageMemoryPtrTo(0x3d), ram.PtrTo(0x3d));
-}
-
 TEST(CPU, UpdateFlagsForNegative) {
   cpu.UpdateFlagsFor(0b10001000);
 

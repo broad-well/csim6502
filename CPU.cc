@@ -43,13 +43,6 @@ CPU::CPU(RAM* memory) :
   status.Clear();
 }
 
-byte *CPU::AbsoluteMemoryPtrTo(word address) const {
-  return memory->PtrTo(address);
-}
-byte *CPU::ZeroPageMemoryPtrTo(byte low_address) const {
-  return memory->PtrTo(low_address);
-}
-
 void CPU::UpdateFlagsFor(const byte &new_value) {
   status.zero_result = new_value==0;
   status.negative_result = new_value >= 0b10000000;

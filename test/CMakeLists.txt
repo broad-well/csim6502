@@ -9,11 +9,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fprofile-instr-generate -fco
 include_directories(${GTEST_INCLUDE_DIRS})
 #find_package(GTest REQUIRED)
 
-set(BASE_TEST_FILES HeapRAMTest UtilTest CPUTest MockRAMTest)
+set(BASE_TEST_FILES HeapRAMTest UtilTest CPUTest MockRAMTest RAMTest)
 
 foreach(testFile ${BASE_TEST_FILES})
     add_executable(${testFile} ${testFile}.cc)
-    target_link_libraries(${testFile} gtest gtest_main csim6502_base)
+    target_link_libraries(${testFile} gtest gtest_main gmock csim6502_base)
     add_test(${testFile} ${testFile})
 endforeach()
 

@@ -13,3 +13,8 @@ TEST(MockRAM, Persistence) {
   ram.Write(0xf2, 0x13);
   ASSERT_EQ(ram.Read(0xf2), 0x13);
 }
+
+TEST(MockRAM, ExistingValues) {
+  ASSERT_EQ(ram.Read(0x02), 0xa2);
+  ASSERT_EQ(ram.ReadWord(0x03), 0xe15f);
+}

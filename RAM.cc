@@ -10,38 +10,66 @@
 #include "RAM.hh"
 #include "Util.hh"
 
-byte *RAM::PtrTo(const word address) {
+byte RAM::Read(const word address) {
+
+  auto hook = FindHook(address);
+  if (hook != nullptr)
+    return (*hook)->OnRead(*this, address);
+
   checkAddress(address);
-  return ptrTo(address);
+  return *ptrTo(address);
 }
 
-byte RAM::Read(const word address) {
-  return *PtrTo(address);
-}
 void RAM::Write(const word address, const byte value) {
-  *PtrTo(address) = value;
+
+  auto hook = FindHook(address);
+  if (hook != nullptr) {
+    (*hook)->OnWrite(*this, address, value);
+    return;
+  }
+
+  checkAddress(address);
+  *ptrTo(address) = value;
 }
-byte *RAM::PtrToIndirectTarget(word given_address) {
-  return PtrTo(ReadWord(given_address));
+
+byte RAM::ReadIndirectTarget(word given_address) {
+  return Read(ReadWord(given_address));
 }
+void RAM::WriteIndirectTarget(word given_address, byte value) {
+  Write(ReadWord(given_address), value);
+}
+
 word RAM::ReadWord(word address) {
   // Little endian
   byte low(Read(address)),
-      high(Read(address + (word)sizeof(byte)));
+      high(Read(address + (word) sizeof(byte)));
 
   return bit::AsWord(low, high);
+}
+
+void RAM::AddHook(Hook *newHook) {
+  hooks.emplace(newHook);
+}
+void RAM::ClearHooks() {
+  hooks.clear();
+}
+const std::unique_ptr<Hook> *RAM::FindHook(word address) {
+  for (auto& hook : hooks)
+    if (hook->ShouldAddressAccessRedirect(address))
+      return &hook;
+  return nullptr;
 }
 
 HeapRAM::HeapRAM(size_t size) : size(size) {
   pool = new uint8_t[size];
 }
 
-HeapRAM::HeapRAM(const byte *src, size_t size) : HeapRAM(size)
-{
+HeapRAM::HeapRAM(const byte *src, size_t size) : HeapRAM(size) {
   std::memcpy(pool, src, size);
 }
 
 HeapRAM::~HeapRAM() {
+
   delete[] pool;
 }
 

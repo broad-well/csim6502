@@ -5,12 +5,6 @@
 #include <gtest/gtest.h>
 #include "../RAM.hh"
 
-TEST(HeapRAM, PtrInRange)
-{
-  HeapRAM ram(0x100);
-  ASSERT_EQ(ram.PtrTo(0x00), ram.PtrTo(0x01) - 1*sizeof(byte));
-}
-
 TEST(HeapRAM, ReadInRange)
 {
   constexpr auto data = "Read my RAM";
@@ -39,9 +33,8 @@ TEST(HeapRAM, WriteInRange)
 TEST(HeapRAM, AccessOutOfRange) {
   HeapRAM ram(0x10);
 
-  ASSERT_THROW(ram.PtrTo(0x10), std::out_of_range);
   ASSERT_THROW(ram.Read(0x11), std::out_of_range);
-  ASSERT_THROW(ram.Write(0x12, 2), std::out_of_range);
+  ASSERT_THROW(ram.Write(0x10, 2), std::out_of_range);
 }
 
 TEST(HeapRAM, ReadWord) {
@@ -55,14 +48,15 @@ TEST(HeapRAM, ReadWord) {
   ASSERT_THROW(ram.ReadWord(0x05), std::out_of_range);
 }
 
-TEST(HeapRAM, PtrToIndirectTarget) {
+TEST(HeapRAM, IndirectTarget) {
   byte data[] {
       0x4a, 0xa3, 0x81, 0x02, 0x00, 0x00, 0x04
   };
   HeapRAM ram(data, 7);
 
-  ASSERT_EQ(ram.PtrToIndirectTarget(0x03), ram.PtrTo(0x02));
-  ASSERT_EQ(ram.PtrToIndirectTarget(0x04), ram.PtrTo(0x00));
-  ASSERT_THROW(ram.PtrToIndirectTarget(0x05), std::out_of_range);
-  ASSERT_THROW(ram.PtrToIndirectTarget(0x06), std::out_of_range);
+  ASSERT_EQ(ram.ReadIndirectTarget(0x03), 0x81);
+  ram.WriteIndirectTarget(0x04, 0x4c);
+  ASSERT_EQ(ram.ReadIndirectTarget(0x04), 0x4c);
+  ASSERT_THROW(ram.ReadIndirectTarget(0x05), std::out_of_range);
+  ASSERT_THROW(ram.WriteIndirectTarget(0x06, 0x4d), std::out_of_range);
 }
