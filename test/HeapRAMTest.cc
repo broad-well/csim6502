@@ -3,7 +3,7 @@
 //
 
 #include <gtest/gtest.h>
-#include "../RAM.hh"
+#include "RAM.hh"
 
 TEST(HeapRAM, ReadInRange)
 {

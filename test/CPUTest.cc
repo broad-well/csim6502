@@ -3,8 +3,8 @@
 //
 
 #include <gtest/gtest.h>
-#include "../CPU.hh"
-#include "../Util.hh"
+#include "CPU.hh"
+#include "Util.hh"
 #include "MockRAM.hh"
 
 MockRAM ram {
@@ -156,4 +156,22 @@ TEST(CPU, StackOverflow) {
 
 TEST(CPU, StackUnderflow) {
   ASSERT_THROW(cpu.PullByteFromStack(), std::underflow_error);
+}
+
+TEST(CPU, Reset) {
+  cpu.pc = 0xDAEB;
+  cpu.sp = 0x1551;
+  cpu.x = 0xAE;
+  cpu.y = 0xB8;
+  cpu.ac = 0x1D;
+  cpu.status.decimal_mode = true;
+
+  cpu.Reset();
+
+  ASSERT_EQ(cpu.pc, 0x0000);
+  ASSERT_NE(cpu.sp, 0x1551);
+  ASSERT_EQ(cpu.x, 0x00);
+  ASSERT_EQ(cpu.y, 0x00);
+  ASSERT_EQ(cpu.ac, 0x00);
+  ASSERT_EQ(cpu.status.ToByte(), 0b00000000);
 }

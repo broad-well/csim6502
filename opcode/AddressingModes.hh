@@ -6,6 +6,7 @@
 #define CSIM6502_ADDRESSINGMODES_HH
 
 #include <functional>
+#include <CPU.hh>
 #include "../types.hh"
 #include "../CPU.hh"
 #include "../Util.hh"

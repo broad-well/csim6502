@@ -8,8 +8,8 @@
 #include <cstddef>
 #include <cstdlib>
 #include <map>
-#include "../RAM.hh"
-#include "../types.hh"
+#include "RAM.hh"
+#include "types.hh"
 
 class MockRAM : public RAM {
   public:

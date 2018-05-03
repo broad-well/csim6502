@@ -106,3 +106,10 @@ word CPU::PullWordFromStack() {
 
   return bit::AsWord(low, high);
 }
+
+void CPU::Reset() {
+  pc = 0x00;
+  sp = kStackFirst;
+  x = y = ac = 0;
+  status.Clear();
+}

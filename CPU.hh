@@ -59,7 +59,7 @@ struct CPU {
   word PullWordFromStack();
 
   void IncrementProgramCounter();
-
+  void Reset();
   void DumpRegisterInfo(std::ostream& out = std::cout) const;
 };
 

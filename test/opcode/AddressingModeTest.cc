@@ -2,9 +2,9 @@
 // Created by Michael Peng on 5/2/18.
 //
 
-#include "../opcode/AddressingModes.hh"
-#include "../CPU.hh"
-#include "MockRAM.hh"
+#include "opcode/AddressingModes.hh"
+#include "CPU.hh"
+#include "../MockRAM.hh"
 #include <exception>
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>

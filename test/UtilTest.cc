@@ -3,7 +3,7 @@
 //
 
 #include <gtest/gtest.h>
-#include "../Util.hh"
+#include "Util.hh"
 
 using namespace format;
 using namespace bit;
