@@ -38,14 +38,6 @@ void RAM::Write(const word address, const byte value) {
   checkAddress(address);
   storeValue(address, value);
 }
-byte RAM::ReadIndirectTarget(word given_address) {
-  return Read(ReadWord(given_address));
-}
-
-void RAM::WriteIndirectTarget(word given_address, byte value) {
-  Write(ReadWord(given_address), value);
-}
-
 word RAM::ReadWord(word address) {
   // Little endian
   byte low(Read(address)),
@@ -53,15 +45,20 @@ word RAM::ReadWord(word address) {
 
   return bit::AsWord(low, high);
 }
+void RAM::WriteWord(word address, word value) {
+  Write(address, bit::LowByte(value));
+  Write(address + static_cast<word>(sizeof(byte)), bit::HighByte(value));
+}
 void RAM::AddHook(Hook *newHook) {
   hooks.emplace(newHook);
 }
+
 void RAM::ClearHooks() {
   hooks.clear();
 }
 
 const std::unique_ptr<Hook> *RAM::FindHook(word address) {
-  for (auto& hook : hooks)
+  for (auto &hook : hooks)
     if (hook->ShouldAddressAccessRedirect(address))
       return &hook;
   return nullptr;
@@ -79,7 +76,6 @@ HeapRAM::~HeapRAM() {
 
   delete[] pool;
 }
-
 void HeapRAM::checkAddress(const uint16_t address) const {
   if (address >= size) {
     throw std::out_of_range("Address out of range: " + std::to_string(address));

@@ -42,8 +42,6 @@ struct CPU {
   StatusFlags status;
   RAM* memory;
 
-  public:
-
   explicit CPU(RAM* memory);
   ~CPU() = default;
 

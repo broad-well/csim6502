@@ -34,9 +34,7 @@ class RAM {
   byte Read(word address);
   word ReadWord(word address);
   void Write(word address, byte value);
-
-  byte ReadIndirectTarget(word given_address);
-  void WriteIndirectTarget(word given_address, byte value);
+  void WriteWord(word address, word value);
 
   void AddHook(Hook *newHook);
   void ClearHooks();

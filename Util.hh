@@ -16,9 +16,9 @@ namespace format {
   inline std::string AsPaddedHex(const unsigned &value, const std::uint8_t pad = 2) {
     using namespace std;
 
-    stringstream sstream;
-    sstream << setfill('0') << setw(pad) << hex << value;
-    return sstream.str();
+    stringstream stream;
+    stream << setfill('0') << setw(pad) << hex << value;
+    return stream.str();
   }
 
 }

@@ -48,15 +48,14 @@ TEST(HeapRAM, ReadWord) {
   ASSERT_THROW(ram.ReadWord(0x05), std::out_of_range);
 }
 
-TEST(HeapRAM, IndirectTarget) {
+TEST(HeapRAM, WriteWord) {
   byte data[] {
-      0x4a, 0xa3, 0x81, 0x02, 0x00, 0x00, 0x04
+    0x41, 0x13, 0xfc, 0xb4
   };
-  HeapRAM ram(data, 7);
+  HeapRAM ram(data, 4);
 
-  ASSERT_EQ(ram.ReadIndirectTarget(0x03), 0x81);
-  ram.WriteIndirectTarget(0x04, 0x4c);
-  ASSERT_EQ(ram.ReadIndirectTarget(0x04), 0x4c);
-  ASSERT_THROW(ram.ReadIndirectTarget(0x05), std::out_of_range);
-  ASSERT_THROW(ram.WriteIndirectTarget(0x06, 0x4d), std::out_of_range);
+  ram.WriteWord(0x00, 0x4dac);
+  ASSERT_EQ(ram.ReadWord(0x00), 0x4dac);
+  ASSERT_EQ(ram.Read(0x01), 0x4d);
+  ASSERT_EQ(ram.Read(0x00), 0xac);
 }

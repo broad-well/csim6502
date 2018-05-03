@@ -17,10 +17,10 @@ foreach(testFile ${BASE_TEST_FILES})
     add_test(${testFile} ${testFile})
 endforeach()
 
-set(OPCODE_TEST_FILES)
+set(OPCODE_TEST_FILES AddressingModeTest)
 
 foreach(testFile ${OPCODE_TEST_FILES})
     add_executable(${testFile} ${testFile}.cc)
-    target_link_libraries(${testFile} gtest gtest_main csim6502_opcode)
+    target_link_libraries(${testFile} gtest gtest_main gmock csim6502_base csim6502_opcode)
     add_test(${testFile} ${testFile})
 endforeach()

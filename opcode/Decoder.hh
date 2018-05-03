@@ -7,6 +7,7 @@
 
 #include <cstdint>
 #include "../types.hh"
+#include "Executor.hh"
 
 // Macros that resolve addressing modes
 // ADDR2 => instructions that take 2 bytes (1 byte operand)
@@ -20,11 +21,9 @@
 #define ADDR2_INDIRECT_X(cpu, mem, operand_ptr) ADDR2_ZEROPAGE(mem, ADDR2_ZEROPAGE_X(cpu, mem, operand_ptr))
 //#define ADDR2_INDIRECT_Y(cpu, mem, operand_ptr) ((mem)->Read(*(operand_ptr)) + (cpu)->y)
 
-class OpcodeHandler {
-
-};
-
+// Table ideas: ADC(Immediate), Illegal(), RTS(), etc.
 class Decoder {
+
 };
 
 
