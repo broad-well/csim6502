@@ -6,31 +6,24 @@
 #define CSIM6502_ADDRESSINGMODES_HH
 
 #include <functional>
-#include <CPU.hh>
-#include "../types.hh"
 #include "../CPU.hh"
+#include "../types.hh"
 #include "../Util.hh"
 
 struct AddressingMode {
-  std::function<word(CPU &)> Read;
+  std::function<byte(CPU &)> Read;
   std::function<void(CPU &, byte)> Write;
 };
 
-// Shorthand for a trivial Addressing Mode that uses the given function to deduce the address, which is returned
-inline AddressingMode ModeWithAddressAs(const std::function<word(CPU &)> &address_supplier) {
-  return {
-      [address_supplier](CPU &cpu) {
-        return cpu.memory->Read(address_supplier(cpu));
-      },
-      [address_supplier](CPU &cpu, byte value) {
-        cpu.memory->Write(address_supplier(cpu), value);
-      }
-  };
-}
-
 namespace address {
 
-#define MODE_ADDRESSED_AS(operation) ModeWithAddressAs([](CPU &cpu) { return (operation); })
+#define MODE_ADDRESSED_AS(operation) { \
+[](CPU &cpu) { \
+  return cpu.memory->Read((operation)); \
+}, \
+[](CPU &cpu, byte value) { \
+  cpu.memory->Write((operation), value); \
+}}
 
 static const AddressingMode Immediate = {
     [](CPU &cpu) {

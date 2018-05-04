@@ -11,7 +11,6 @@ struct CPU;
 #include <ostream>
 #include <iostream>
 #include "types.hh"
-#include "opcode/Decoder.hh"
 #include "RAM.hh"
 
 // C Z I D B _ V N
@@ -64,5 +63,6 @@ struct CPU {
   void Reset();
   void DumpRegisterInfo(std::ostream& out = std::cout) const;
 };
+
 
 #endif //CSIM6502_CPU_HH

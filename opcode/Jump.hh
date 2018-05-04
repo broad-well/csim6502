@@ -5,10 +5,10 @@
 #ifndef CSIM6502_JUMP_HH
 #define CSIM6502_JUMP_HH
 
+#include "Executor.hh"
 
-class Jump {
-
-};
+OPCODE_SET {
 
 
+}
 #endif //CSIM6502_JUMP_HH

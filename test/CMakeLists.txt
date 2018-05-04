@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
 include(../CMakeCommon.txt)
-
-project(csim6502_tests CXX)
 include(GoogleTest)
 
 enable_testing()

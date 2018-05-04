@@ -8,7 +8,7 @@
 #include "../CPU.hh"
 #include "Executor.hh"
 
-namespace opcode {
+OPCODE_SET {
 
 NILADIC_OPCODE(NOP);
 NILADIC_OPCODE(BRK);

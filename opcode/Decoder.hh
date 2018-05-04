@@ -10,6 +10,7 @@
 
 #include "System.hh"
 #include "Stack.hh"
+#include "Storage.hh"
 
 // Table ideas: ADC(Immediate), Illegal(), RTS(), etc.
 class Decoder {
