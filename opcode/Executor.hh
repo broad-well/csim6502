@@ -6,7 +6,6 @@
 #define CSIM6502_EXECUTOR_HH
 
 #include "../types.hh"
-#include "../CPU.hh"
 
 #define NILADIC_OPCODE(name) void name(CPU& cpu)
 #define STATIC_OPCODE(name) void name(CPU&)

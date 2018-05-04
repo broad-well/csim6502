@@ -41,14 +41,13 @@ struct CPU {
       pc, // Program counter
       sp; // Stack pointer
 
-  Decoder decoder;
   StatusFlags status;
   RAM* memory;
 
   explicit CPU(RAM* memory);
   ~CPU() = default;
 
-  void UpdateFlagsFor(const byte& new_value);
+  void UpdateFlagsFor(byte new_value);
   void JumpRelative(signed_byte offset);
 
   // For opcodes and operands

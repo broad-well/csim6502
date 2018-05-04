@@ -39,12 +39,12 @@ std::string StatusFlags::ToString() const {
 
 CPU::CPU(RAM* memory) :
     x(0), y(0), ac(0), pc(0), sp(kStackFirst),
-    decoder(), status(), memory(memory) {
+    status(), memory(memory) {
 
   status.Clear();
 }
 
-void CPU::UpdateFlagsFor(const byte &new_value) {
+void CPU::UpdateFlagsFor(const byte new_value) {
   status.zero_result = new_value==0;
   status.negative_result = new_value >= 0b10000000;
 }

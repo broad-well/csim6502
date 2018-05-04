@@ -5,6 +5,7 @@
 #ifndef CSIM6502_SYSTEM_HH
 #define CSIM6502_SYSTEM_HH
 
+#include "../CPU.hh"
 #include "Executor.hh"
 
 namespace opcode {
