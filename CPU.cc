@@ -2,6 +2,7 @@
 // Created by Michael Peng on 4/26/18.
 //
 
+#include <cstring>
 #include "CPU.hh"
 #include "Util.hh"
 

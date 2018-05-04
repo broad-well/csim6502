@@ -5,7 +5,7 @@ project(csim6502_tests CXX)
 include(GoogleTest)
 
 enable_testing()
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fprofile-instr-generate -fcoverage-mapping -Werror -pedantic -Wall -Wextra")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 include_directories(${GTEST_INCLUDE_DIRS})
 include_directories(../)
 #find_package(GTest REQUIRED)
@@ -14,11 +14,11 @@ set(BASE_TEST_FILES HeapRAMTest UtilTest CPUTest MockRAMTest RAMTest)
 
 foreach(testFile ${BASE_TEST_FILES})
     add_executable(${testFile} ${testFile}.cc)
-    target_link_libraries(${testFile} gtest gtest_main gmock csim6502_base)
+    target_link_libraries(${testFile} gtest gtest_main gmock csim6502_base pthread)
     add_test(${testFile} ${testFile})
 endforeach()
 
-set(OPCODE_TEST_FILES AddressingModeTest SystemTest)
+set(OPCODE_TEST_FILES AddressingModeTest SystemTest StackTest)
 
 foreach(testFile ${OPCODE_TEST_FILES})
     add_executable(${testFile} opcode/${testFile}.cc)

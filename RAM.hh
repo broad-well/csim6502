@@ -15,6 +15,8 @@ class RAM;
 class Hook {
   public:
 
+  virtual ~Hook() = default;
+
   virtual bool ShouldAddressAccessRedirect(word) const {
     return false;
   }

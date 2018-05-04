@@ -8,8 +8,11 @@
 #include "Executor.hh"
 
 namespace opcode {
-  NILADIC_OPCODE(NOP);
-  NILADIC_OPCODE(BRK);
+
+NILADIC_OPCODE(NOP);
+NILADIC_OPCODE(BRK);
+NILADIC_OPCODE(Illegal);
+
 }
 
 #endif //CSIM6502_SYSTEM_HH

@@ -5,6 +5,9 @@
 #ifndef CSIM6502_CPU_HH
 #define CSIM6502_CPU_HH
 
+// Decoder's dependency
+struct CPU;
+
 #include <ostream>
 #include <iostream>
 #include "types.hh"

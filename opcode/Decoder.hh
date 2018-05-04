@@ -7,10 +7,14 @@
 
 #include <cstdint>
 #include "../types.hh"
-#include "Executor.hh"
+
+#include "System.hh"
+#include "Stack.hh"
 
 // Table ideas: ADC(Immediate), Illegal(), RTS(), etc.
 class Decoder {
+
+ private:
 
 };
 

@@ -6,9 +6,5 @@
 #define CSIM6502_STORAGE_HH
 
 
-class Storage {
-
-};
-
 
 #endif //CSIM6502_STORAGE_HH

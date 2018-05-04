@@ -19,3 +19,7 @@ TEST(SystemOpcode, BRK) {
   ASSERT_EQ(cpu.PullByteFromStack(), cpu.status.ToByte() | 0x10U);
   ASSERT_EQ(cpu.PullWordFromStack(), 0x0001);
 }
+
+TEST(SystemOpcode, Illegal) {
+  ASSERT_THROW(opcode::Illegal(cpu), std::invalid_argument);
+}
