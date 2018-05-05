@@ -16,7 +16,7 @@ foreach(testFile ${BASE_TEST_FILES})
     add_test(${testFile} ${testFile})
 endforeach()
 
-set(OPCODE_TEST_FILES AddressingModeTest SystemTest StackTest StorageTest)
+set(OPCODE_TEST_FILES AddressingModeTest SystemTest StackTest StorageTest JumpTest)
 
 foreach(testFile ${OPCODE_TEST_FILES})
     add_executable(${testFile} opcode/${testFile}.cc)

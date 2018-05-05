@@ -5,9 +5,6 @@
 #ifndef CSIM6502_CPU_HH
 #define CSIM6502_CPU_HH
 
-// Decoder's dependency
-struct CPU;
-
 #include <ostream>
 #include <iostream>
 #include "types.hh"
@@ -44,7 +41,7 @@ struct CPU {
   RAM* memory;
 
   explicit CPU(RAM* memory);
-  ~CPU() = default;
+  virtual ~CPU() = default;
 
   void UpdateFlagsFor(byte new_value);
   void JumpRelative(signed_byte offset);
