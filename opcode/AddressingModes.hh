@@ -33,6 +33,14 @@ static const AddressingMode Immediate = {
     nullptr
 },
 
+    Accumulator = {
+    [](CPU &cpu) {
+      return cpu.ac;
+    },
+    [](CPU &cpu, byte value) {
+      cpu.ac = value;
+    }
+},
     Absolute = MODE_ADDRESSED_AS(cpu.NextOperandWord()),
     AbsoluteIndexedX = MODE_ADDRESSED_AS(cpu.NextOperandWord() + cpu.x),
     AbsoluteIndexedY = MODE_ADDRESSED_AS(cpu.NextOperandWord() + cpu.y),

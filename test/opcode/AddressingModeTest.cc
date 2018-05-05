@@ -25,6 +25,14 @@ TEST(AddressingMode, Immediate) {
   cpu.pc = 0x00;
 }
 
+TEST(AddressingMode, Accumulator) {
+  cpu.ac = 0x3d;
+  ASSERT_EQ(Accumulator.Read(cpu), 0x3d);
+
+  Accumulator.Write(cpu, 0xda);
+  ASSERT_EQ(cpu.ac, 0xda);
+}
+
 TEST(AddressingMode, Absolute) {
   ram.Write(0x1341, 0xcc);
   ram.Write(0xfc53, 0xff);
