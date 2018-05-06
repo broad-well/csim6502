@@ -13,23 +13,30 @@
 struct AddressingMode {
   std::function<byte(CPU &)> Read;
   std::function<void(CPU &, byte)> Write;
+  std::function<void(CPU &, std::function<byte(byte)>)> Modify;
 };
 
 namespace address {
 
 #define MODE_ADDRESSED_AS(operation) { \
-[](CPU &cpu) { \
-  return cpu.memory->Read((operation)); \
-}, \
-[](CPU &cpu, byte value) { \
-  cpu.memory->Write((operation), value); \
-}}
+  [](CPU &cpu) { \
+    return cpu.memory->Read((operation)); \
+  }, \
+  [](CPU &cpu, byte value) { \
+    cpu.memory->Write((operation), value); \
+  }, \
+  [](CPU &cpu, std::function<byte(byte)> func) { \
+    const auto addr = (operation); \
+    cpu.memory->Write(addr, func(cpu.memory->Read(addr))); \
+  } \
+}
 
 static const AddressingMode Immediate = {
     [](CPU &cpu) {
       return cpu.NextCodeByte();
     },
     // Should throw bad_function_call
+    nullptr,
     nullptr
 },
 
@@ -39,6 +46,9 @@ static const AddressingMode Immediate = {
     },
     [](CPU &cpu, byte value) {
       cpu.ac = value;
+    },
+    [](CPU &cpu, auto func) {
+      cpu.ac = func(cpu.ac);
     }
 },
     Absolute = MODE_ADDRESSED_AS(cpu.NextOperandWord()),

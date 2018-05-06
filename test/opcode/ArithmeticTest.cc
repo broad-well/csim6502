@@ -9,13 +9,13 @@
 
 #include "opcode/Arithmetic.hh"
 
-MockAddressingMode mode(0x66);
 MockRAM ram {
   0x1d, 0x42, 0xaf, 0x4b, 0xc6, 0x92, 0x17, 0xa4
 };
 CPU cpu(&ram);
 
 #define ASSERT_OPERATION(initial_ac, initial_carry, code, result_ac) do { \
+  MockAddressingMode mode(0x66); \
   cpu.Reset(); \
   cpu.ac = initial_ac; \
   cpu.status.carry = initial_carry; \
@@ -78,3 +78,224 @@ TEST(ArithmeticOpcode, SBC_NoOverflowCarry) {
   ASSERT_FALSE(cpu.status.overflow);
   ASSERT_TRUE(cpu.status.negative_result);
 }
+
+TEST(ArithmeticOpcode, INC) {
+  cpu.Reset();
+  MockAddressingMode address(0x7f);
+
+  opcode::INC(cpu, address);
+
+  ASSERT_EQ(address.value, 0x80);
+  ASSERT_TRUE(cpu.status.negative_result);
+}
+
+TEST(ArithmeticOpcode, DEC) {
+  cpu.Reset();
+  MockAddressingMode address(0xf2);
+
+  opcode::DEC(cpu, address);
+
+  ASSERT_EQ(address.value, 0xf1);
+  ASSERT_TRUE(cpu.status.negative_result);
+}
+
+TEST(ArithmeticOpcode, DEX_DEY) {
+  cpu.Reset();
+  cpu.x = 0x9f;
+
+  opcode::DEX(cpu);
+
+  ASSERT_EQ(cpu.x, 0x9e);
+  ASSERT_TRUE(cpu.status.negative_result);
+
+  cpu.y = 0x01;
+
+  opcode::DEY(cpu);
+
+  ASSERT_EQ(cpu.y, 0x00);
+  ASSERT_TRUE(cpu.status.zero_result);
+}
+
+TEST(ArithmeticOpcode, INX_INY) {
+  cpu.Reset();
+  cpu.x = 0x7f;
+
+  opcode::INX(cpu);
+
+  ASSERT_EQ(cpu.x, 0x80);
+  ASSERT_TRUE(cpu.status.negative_result);
+  cpu.y = 0xff;
+
+  opcode::INY(cpu);
+
+  ASSERT_EQ(cpu.y, 0x00);
+  ASSERT_TRUE(cpu.status.zero_result);
+}
+
+#define ASSERT_OPCODE_SETS_ACCUMULATOR(code, prev_ac, result) do { \
+  MockAddressingMode mode(0x66); \
+  cpu.Reset(); \
+  cpu.ac = prev_ac; \
+\
+  opcode::code(cpu, mode); \
+\
+  ASSERT_EQ(cpu.ac, (result)); \
+} while (0)
+
+TEST(ArithmeticOpcode, AND) {
+  ASSERT_OPCODE_SETS_ACCUMULATOR(AND, 0x24U, 0x24U & 0x66U);
+  ASSERT_OPCODE_SETS_ACCUMULATOR(AND, 0x80U, 0x0);
+  ASSERT_TRUE(cpu.status.zero_result);
+}
+TEST(ArithmeticOpcode, EOR) {
+  ASSERT_OPCODE_SETS_ACCUMULATOR(EOR, 0x8eU, 0x8eU ^ 0x66U);
+  ASSERT_OPCODE_SETS_ACCUMULATOR(EOR, 0xdaU, 0x66U ^ 0xdaU);
+  ASSERT_TRUE(cpu.status.negative_result);
+}
+TEST(ArithmeticOpcode, ORA) {
+  ASSERT_OPCODE_SETS_ACCUMULATOR(ORA, 0x93U, 0x93U | 0x66U);
+  ASSERT_TRUE(cpu.status.negative_result);
+  ASSERT_OPCODE_SETS_ACCUMULATOR(ORA, 0xedU, 0xedU | 0x66U);
+  ASSERT_TRUE(cpu.status.negative_result);
+}
+
+TEST(ArithmeticOpcode, BIT) {
+  cpu.Reset();
+  cpu.ac = 0x5f;
+
+  MockAddressingMode address(0b10010100);
+  opcode::BIT(cpu, address);
+  ASSERT_TRUE(cpu.status.negative_result);
+  ASSERT_FALSE(cpu.status.overflow);
+  ASSERT_FALSE(cpu.status.zero_result);
+
+  address = 0b01001001U;
+  opcode::BIT(cpu, address);
+  ASSERT_FALSE(cpu.status.negative_result);
+  ASSERT_TRUE(cpu.status.overflow);
+  ASSERT_FALSE(cpu.status.zero_result);
+
+  address = 0x0;
+  opcode::BIT(cpu, address);
+  ASSERT_FALSE(cpu.status.negative_result);
+  ASSERT_FALSE(cpu.status.overflow);
+  ASSERT_TRUE(cpu.status.zero_result);
+}
+
+TEST(ArithmeticOpcode, ASL) {
+  cpu.Reset();
+  MockAddressingMode memory(0b10010100);
+
+  opcode::ASL(cpu, memory);
+
+  ASSERT_EQ(memory.value, 0b00101000);
+  ASSERT_TRUE(cpu.status.carry);
+  ASSERT_FALSE(cpu.status.negative_result);
+
+  cpu.Reset();
+  cpu.ac = 0b01101101;
+
+  opcode::ASL(cpu, address::Accumulator);
+
+  ASSERT_EQ(cpu.ac, 0b11011010);
+  ASSERT_FALSE(cpu.status.carry);
+  ASSERT_TRUE(cpu.status.negative_result);
+}
+
+TEST(ArithmeticOpcode, LSR) {
+  cpu.Reset();
+  MockAddressingMode memory(0b11100101);
+
+  opcode::LSR(cpu, memory);
+
+  ASSERT_EQ(memory.value, 0b01110010);
+  ASSERT_TRUE(cpu.status.carry);
+
+  cpu.Reset();
+  cpu.ac = 0b00101110;
+
+  opcode::LSR(cpu, address::Accumulator);
+
+  ASSERT_EQ(cpu.ac, 0b00010111);
+  ASSERT_FALSE(cpu.status.carry);
+}
+
+TEST(ArithmeticOpcode, ROL) {
+  cpu.Reset();
+  cpu.status.carry = true;
+  MockAddressingMode memory(0b01001110);
+
+  opcode::ROL(cpu, memory);
+
+  ASSERT_EQ(memory.value, 0b10011101);
+  ASSERT_TRUE(cpu.status.negative_result);
+  ASSERT_FALSE(cpu.status.carry);
+
+  cpu.Reset();
+  cpu.ac = 0b11001100;
+
+  opcode::ROL(cpu, address::Accumulator);
+
+  ASSERT_EQ(cpu.ac, 0b10011000);
+  ASSERT_TRUE(cpu.status.carry);
+}
+
+TEST(ArithmeticOpcode, ROR) {
+  cpu.Reset();
+  cpu.status.carry = true;
+  MockAddressingMode memory(0b11010101);
+
+  opcode::ROR(cpu, memory);
+
+  ASSERT_EQ(memory.value, 0b11101010);
+  ASSERT_TRUE(cpu.status.carry);
+  ASSERT_TRUE(cpu.status.negative_result);
+
+  cpu.Reset();
+  cpu.ac = 0b00110100;
+
+  opcode::ROR(cpu, address::Accumulator);
+
+  ASSERT_EQ(cpu.ac, 0b00011010);
+  ASSERT_FALSE(cpu.status.carry);
+}
+
+#define GIVEN_REG_MEM_VALUES_WHEN_CODE_CALLED(reg_name, reg_value, mem_value, code) \
+  cpu.Reset(); \
+  MockAddressingMode memory((mem_value)); \
+  cpu.reg_name = (reg_value); \
+\
+  opcode::code(cpu, memory);
+
+#define ASSERT_FLAGS_FOR_GREATER_REGISTER_AFTER_OPCODE(reg_name, reg_value, mem_value, code) \
+  GIVEN_REG_MEM_VALUES_WHEN_CODE_CALLED(reg_name, reg_value, mem_value, code) \
+  ASSERT_FALSE(cpu.status.zero_result); \
+  ASSERT_FALSE(cpu.status.negative_result); \
+  ASSERT_TRUE(cpu.status.carry);
+
+#define ASSERT_FLAGS_FOR_EQUALITY_AFTER_OPCODE(reg_name, reg_value, mem_value, code) \
+  GIVEN_REG_MEM_VALUES_WHEN_CODE_CALLED(reg_name, reg_value, mem_value, code) \
+  ASSERT_TRUE(cpu.status.zero_result); \
+  ASSERT_FALSE(cpu.status.negative_result); \
+  ASSERT_TRUE(cpu.status.carry);
+
+#define ASSERT_FLAGS_FOR_LOWER_REGISTER_AFTER_OPCODE(reg_name, reg_value, mem_value, code) \
+  GIVEN_REG_MEM_VALUES_WHEN_CODE_CALLED(reg_name, reg_value, mem_value, code) \
+  ASSERT_FALSE(cpu.status.zero_result); \
+  ASSERT_TRUE(cpu.status.negative_result); \
+  ASSERT_FALSE(cpu.status.carry);
+
+#define TEST_FOR_ALL_CONDITIONS_WITH_OPCODE_COMPARING_BETWEEN_MEMORY_AND(code, reg_name) \
+TEST(ArithmeticOpcode, _##code##_Greater_Register) { \
+  ASSERT_FLAGS_FOR_GREATER_REGISTER_AFTER_OPCODE(reg_name, 0x81, 0x5F, code); \
+} \
+TEST(ArithmeticOpcode, _##code##_Equal) { \
+  ASSERT_FLAGS_FOR_EQUALITY_AFTER_OPCODE(reg_name, 0x91, 0x91, code); \
+} \
+TEST(ArithmeticOpcode, _##code##_Less_Register) { \
+  ASSERT_FLAGS_FOR_LOWER_REGISTER_AFTER_OPCODE(reg_name, 0x52, 0x61, code); \
+}
+
+TEST_FOR_ALL_CONDITIONS_WITH_OPCODE_COMPARING_BETWEEN_MEMORY_AND(CMP, ac)
+TEST_FOR_ALL_CONDITIONS_WITH_OPCODE_COMPARING_BETWEEN_MEMORY_AND(CPX, x)
+TEST_FOR_ALL_CONDITIONS_WITH_OPCODE_COMPARING_BETWEEN_MEMORY_AND(CPY, y)

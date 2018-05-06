@@ -7,6 +7,8 @@
 
 #include "../types.hh"
 
+using Executor = std::function<void(CPU&)>;
+
 #define OPCODE_SET namespace opcode
 #define NILADIC_OPCODE(name) void name(CPU& cpu)
 #define STATIC_OPCODE(name) void name(CPU&)

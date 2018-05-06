@@ -34,3 +34,9 @@ TEST(Bit, WordToBytes) {
   ASSERT_EQ(HighByte(0x01c3), 0x01);
   ASSERT_EQ(HighByte(0x8081), 0x80);
 }
+
+TEST(Bit, NthBit) {
+  ASSERT_TRUE(IsNthBitSet(0b10101110, 3));
+  ASSERT_TRUE(IsNthBitSet(0b11001000, 6));
+  ASSERT_FALSE(IsNthBitSet(0b01100010, 0));
+}

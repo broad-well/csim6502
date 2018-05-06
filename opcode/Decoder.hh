@@ -11,13 +11,9 @@
 #include "System.hh"
 #include "Stack.hh"
 #include "Storage.hh"
+#include "Jump.hh"
+#include "Arithmetic.hh"
 
-// Table ideas: ADC(Immediate), Illegal(), RTS(), etc.
-class Decoder {
-
- private:
-
-};
-
+Executor Decode(byte opcode);
 
 #endif //CSIM6502_DECODER_HH

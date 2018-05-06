@@ -34,5 +34,10 @@ namespace bit {
   inline uint8_t HighByte(const word input) {
     return static_cast<uint8_t>(input >> 8U);
   }
+
+  inline bool IsNthBitSet(const byte data, const byte bit_pos) {
+    return (data & (1U << bit_pos)) != 0;
+  }
 }
+
 #endif //CSIM6502_FORMATUTIL_HH
