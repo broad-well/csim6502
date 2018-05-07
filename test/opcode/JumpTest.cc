@@ -42,15 +42,15 @@ ASSERT_OPCODE_BRANCHES_ON_FLAG_BEING(BPL, negative_result, false);
 ASSERT_OPCODE_BRANCHES_ON_FLAG_BEING(BVS, overflow, true);
 ASSERT_OPCODE_BRANCHES_ON_FLAG_BEING(BVC, overflow, false);
 
-TEST(JumpOpcode, JMP_Absolute) {
+TEST(JumpOpcode, JMP_Abs) {
   cpu.Reset();
-  opcode::JMP_Absolute(cpu);
+  opcode::JMP_Abs(cpu);
   ASSERT_EQ(cpu.pc, 0x0002);
 }
 
-TEST(JumpOpcode, JMP_Indirect) {
+TEST(JumpOpcode, JMP_Ind) {
   cpu.Reset();
-  opcode::JMP_Indirect(cpu);
+  opcode::JMP_Ind(cpu);
   ASSERT_EQ(cpu.pc, 0x2cda);
 }
 

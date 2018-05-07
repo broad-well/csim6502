@@ -5,7 +5,7 @@
 #ifndef CSIM6502_ARITHMETIC_HH
 #define CSIM6502_ARITHMETIC_HH
 
-#include <CPU.hh>
+#include "../CPU.hh"
 #include "Executor.hh"
 #include "AddressingModes.hh"
 

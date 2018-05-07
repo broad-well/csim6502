@@ -6,8 +6,34 @@
 #define CSIM6502_EXECUTOR_HH
 
 #include "../types.hh"
+#include "AddressingModes.hh"
+#include <functional>
 
-using Executor = std::function<void(CPU&)>;
+struct Executor {
+  virtual void Call(CPU&) = 0;
+};
+
+struct NiladicExecutor : public Executor {
+  void (*function)(CPU& cpu);
+
+  explicit NiladicExecutor(void (*function)(CPU &)) : function(function) {}
+
+  void Call(CPU& cpu) override {
+    function(cpu);
+  }
+};
+
+struct MonadicExecutor : public Executor {
+  void (*function)(CPU&, const AddressingMode&);
+  const AddressingMode &mode;
+
+  MonadicExecutor(void (*function)(CPU &, const AddressingMode &), const AddressingMode &mode)
+      : function(function), mode(mode) {}
+
+  void Call(CPU& cpu) override {
+    function(cpu, mode);
+  }
+};
 
 #define OPCODE_SET namespace opcode
 #define NILADIC_OPCODE(name) void name(CPU& cpu)

@@ -25,10 +25,10 @@ OPCODE_BRANCHES_IF_FLAG_CLEAR(BPL, negative_result)
 OPCODE_BRANCHES_IF_FLAG_SET(BVS, overflow)
 OPCODE_BRANCHES_IF_FLAG_CLEAR(BVC, overflow)
 
-NILADIC_OPCODE(JMP_Absolute) {
+NILADIC_OPCODE(JMP_Abs) {
   cpu.pc = cpu.NextOperandWord();
 }
-NILADIC_OPCODE(JMP_Indirect) {
+NILADIC_OPCODE(JMP_Ind) {
   cpu.pc = cpu.memory->ReadWord(cpu.NextOperandWord());
 }
 

@@ -60,6 +60,8 @@ class HeapRAM : public RAM {
   HeapRAM(const byte *src, size_t size);
   ~HeapRAM();
 
+  void Load(const byte* source);
+
   private:
 
   byte *pool;

@@ -19,7 +19,8 @@ TEST(HeapRAM, ReadInRange)
 TEST(HeapRAM, WriteInRange)
 {
   auto data = "Change my RAM";
-  HeapRAM ram((byte*) data, strlen(data));
+  HeapRAM ram(strlen(data));
+  ram.Load((byte*) data);
 
   ram.Write(0xa, 'c');
   ram.Write(0xb, 'a');
@@ -52,7 +53,8 @@ TEST(HeapRAM, WriteWord) {
   byte data[] {
     0x41, 0x13, 0xfc, 0xb4
   };
-  HeapRAM ram(data, 4);
+  HeapRAM ram(4);
+  ram.Load(data);
 
   ram.WriteWord(0x00, 0x4dac);
   ASSERT_EQ(ram.ReadWord(0x00), 0x4dac);

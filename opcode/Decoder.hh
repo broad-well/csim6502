@@ -14,6 +14,6 @@
 #include "Jump.hh"
 #include "Arithmetic.hh"
 
-Executor Decode(byte opcode);
+const std::shared_ptr<Executor> Decode(byte opcode);
 
 #endif //CSIM6502_DECODER_HH

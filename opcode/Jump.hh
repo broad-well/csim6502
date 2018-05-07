@@ -5,7 +5,7 @@
 #ifndef CSIM6502_JUMP_HH
 #define CSIM6502_JUMP_HH
 
-#include <CPU.hh>
+#include "../CPU.hh"
 #include "Executor.hh"
 #include "AddressingModes.hh"
 
@@ -22,8 +22,8 @@ OPCODE_SET {
   NILADIC_OPCODE(BVS);
 
   // JMP and JSR are special. They don't care about the memory to which the address points, it works with the address (operand) itself
-  NILADIC_OPCODE(JMP_Absolute);
-  NILADIC_OPCODE(JMP_Indirect);
+  NILADIC_OPCODE(JMP_Abs);
+  NILADIC_OPCODE(JMP_Ind);
   NILADIC_OPCODE(JSR);
 
   NILADIC_OPCODE(RTI);

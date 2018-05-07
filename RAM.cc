@@ -87,3 +87,6 @@ byte HeapRAM::readStoredValue(word address) {
 void HeapRAM::storeValue(word address, byte value) {
   pool[address] = value;
 }
+void HeapRAM::Load(const byte *source) {
+  std::memcpy(pool, source, size);
+}
