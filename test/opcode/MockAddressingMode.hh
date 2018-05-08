@@ -12,29 +12,16 @@ struct MockAddressingMode : public AddressingMode {
   byte value;
   bool called = false;
 
-  MockAddressingMode(byte val) : value(val) {
-    Read = [this](CPU &) -> byte {
-      if (called)
-        std::cout << "Read called twice" << std::endl;
-      else
-        called = true;
+  MockAddressingMode(byte val) : value(val) {}
 
-      return value;
-    };
-    Write = [this](CPU &, byte new_value) mutable {
-      if (called)
-        std::cout << "Write called twice" << std::endl;
-      else
-        value = new_value;
-      called = true;
-    };
-    Modify = [this](CPU &, auto func) {
-      if (called)
-        std::cout << "Modify called twice" << std::endl;
-      else
-        value = func(value);
-      called = true;
-    };
+  byte Read(CPU &) const override {
+    return value;
+  }
+  void Write(CPU &, byte writing) const override {
+    value = writing;
+  }
+  void Modify(CPU &, const std::function<byte(byte)> & func) const override {
+    value = func(value);
   }
 };
 

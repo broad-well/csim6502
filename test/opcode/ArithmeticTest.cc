@@ -195,7 +195,7 @@ TEST(ArithmeticOpcode, ASL) {
   cpu.Reset();
   cpu.ac = 0b01101101;
 
-  opcode::ASL(cpu, address::Accumulator);
+  opcode::ASL(cpu, address::Accum());
 
   ASSERT_EQ(cpu.ac, 0b11011010);
   ASSERT_FALSE(cpu.status.carry);
@@ -214,7 +214,7 @@ TEST(ArithmeticOpcode, LSR) {
   cpu.Reset();
   cpu.ac = 0b00101110;
 
-  opcode::LSR(cpu, address::Accumulator);
+  opcode::LSR(cpu, address::Accum());
 
   ASSERT_EQ(cpu.ac, 0b00010111);
   ASSERT_FALSE(cpu.status.carry);
@@ -234,7 +234,7 @@ TEST(ArithmeticOpcode, ROL) {
   cpu.Reset();
   cpu.ac = 0b11001100;
 
-  opcode::ROL(cpu, address::Accumulator);
+  opcode::ROL(cpu, address::Accum());
 
   ASSERT_EQ(cpu.ac, 0b10011000);
   ASSERT_TRUE(cpu.status.carry);
@@ -254,7 +254,7 @@ TEST(ArithmeticOpcode, ROR) {
   cpu.Reset();
   cpu.ac = 0b00110100;
 
-  opcode::ROR(cpu, address::Accumulator);
+  opcode::ROR(cpu, address::Accum());
 
   ASSERT_EQ(cpu.ac, 0b00011010);
   ASSERT_FALSE(cpu.status.carry);

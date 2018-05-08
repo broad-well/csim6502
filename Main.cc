@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <csignal>
+#include <chrono>
 
 constexpr int kMemorySize = 65536;
 

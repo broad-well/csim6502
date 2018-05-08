@@ -9,4 +9,4 @@ add_library(csim6502_opcode
         Stack.cc Stack.hh
         System.cc System.hh
         Decoder.cc Decoder.hh
-        Executor.hh AddressingModes.hh)
+        Executor.hh AddressingModes.hh AddressingModes.cc)

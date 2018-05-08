@@ -9,11 +9,14 @@
 using namespace opcode;
 using namespace address;
 
-#define M(code, mode) std::make_shared<MonadicExecutor>(code, mode())
+#define M(code, mode) std::make_shared<MonadicExecutor>(code, &mode)
 #define N(code) std::make_shared<NiladicExecutor>(code)
 #define ILLEGAL N(Illegal)
 
-static const std::shared_ptr<Executor> kInstructionTable[] {
+// Non-standard opcodes:
+//  - FF = Exit emulator
+
+const std::shared_ptr<Executor> kInstructionTable[] {
     // 0          1            2            3        4            5           6            7        8       9             A             B        C           D            E            F
     N(BRK),       M(ORA,XInd), ILLEGAL,     ILLEGAL, ILLEGAL,     M(ORA,Zpg), M(ASL,Zpg),  ILLEGAL, N(PHP), M(ORA,Immed), M(ASL,Accum), ILLEGAL, ILLEGAL,    M(ORA,Abs),  M(ASL,Abs),  ILLEGAL,
     N(BPL),       M(ORA,IndY), ILLEGAL,     ILLEGAL, ILLEGAL,     M(ORA,ZpgX),M(ASL,ZpgX), ILLEGAL, N(CLC), M(ORA,AbsY),  ILLEGAL,      ILLEGAL, ILLEGAL,    M(ORA,AbsX), M(ASL,AbsX), ILLEGAL,
@@ -30,7 +33,7 @@ static const std::shared_ptr<Executor> kInstructionTable[] {
     M(CPY,Immed), M(CMP,XInd), ILLEGAL,     ILLEGAL, M(CPY,Zpg),  M(CMP,Zpg), M(DEC,Zpg),  ILLEGAL, N(INY), M(CMP,Immed), N(DEX),       ILLEGAL, M(CPY,Abs), M(CMP,Abs),  M(DEC,Abs),  ILLEGAL,
     N(BNE),       M(CMP,IndY), ILLEGAL,     ILLEGAL, ILLEGAL,     M(CMP,ZpgX),M(DEC,ZpgX), ILLEGAL, N(CLD), M(CMP,AbsY),  ILLEGAL,      ILLEGAL, ILLEGAL,    M(CMP,AbsX), M(DEC,AbsX), ILLEGAL,
     M(CPX,Immed), M(SBC,XInd), ILLEGAL,     ILLEGAL, M(CPX,Zpg),  M(SBC,Zpg), M(INC,Zpg),  ILLEGAL, N(INX), M(SBC,Immed), N(NOP),       ILLEGAL, M(CPX,Abs), M(SBC,Abs),  M(INC,Abs),  ILLEGAL,
-    N(BEQ),       M(SBC,IndY), ILLEGAL,     ILLEGAL, ILLEGAL,     M(SBC,ZpgX),M(INC,ZpgX), ILLEGAL, N(SED), M(SBC,AbsY),  ILLEGAL,      ILLEGAL, ILLEGAL,    M(SBC,AbsX), M(INC,AbsX), ILLEGAL
+    N(BEQ),       M(SBC,IndY), ILLEGAL,     ILLEGAL, ILLEGAL,     M(SBC,ZpgX),M(INC,ZpgX), ILLEGAL, N(SED), M(SBC,AbsY),  ILLEGAL,      ILLEGAL, ILLEGAL,    M(SBC,AbsX), M(INC,AbsX), N(EXIT)
 };
 
 const std::shared_ptr<Executor> Decode(byte opcode) {

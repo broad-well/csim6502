@@ -3,6 +3,7 @@
 //
 
 #include "System.hh"
+#include <cstdlib>
 
 namespace opcode {
 
@@ -17,6 +18,10 @@ NILADIC_OPCODE(BRK) {
 
 STATIC_OPCODE(Illegal) {
   throw std::invalid_argument("Illegal instruction");
+}
+
+STATIC_OPCODE(EXIT) {
+  std::exit(0);
 }
 
 }

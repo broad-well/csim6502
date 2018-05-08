@@ -10,28 +10,30 @@
 #include <functional>
 
 struct Executor {
-  virtual void Call(CPU&) = 0;
+  virtual ~Executor() = default;
+
+  virtual void Call(CPU &) = 0;
 };
 
 struct NiladicExecutor : public Executor {
-  void (*function)(CPU& cpu);
+  void (*function)(CPU &cpu);
 
   explicit NiladicExecutor(void (*function)(CPU &)) : function(function) {}
 
-  void Call(CPU& cpu) override {
+  void Call(CPU &cpu) override {
     function(cpu);
   }
 };
 
 struct MonadicExecutor : public Executor {
-  void (*function)(CPU&, const AddressingMode&);
-  const AddressingMode &mode;
+  void (*function)(CPU &, const AddressingMode &);
+  const AddressingMode *mode;
 
-  MonadicExecutor(void (*function)(CPU &, const AddressingMode &), const AddressingMode &mode)
+  MonadicExecutor(void (*function)(CPU &, const AddressingMode &), const AddressingMode *mode)
       : function(function), mode(mode) {}
 
-  void Call(CPU& cpu) override {
-    function(cpu, mode);
+  void Call(CPU &cpu) override {
+    function(cpu, *mode);
   }
 };
 
