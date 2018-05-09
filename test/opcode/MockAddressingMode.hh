@@ -8,21 +8,9 @@
 #include "opcode/AddressingModes.hh"
 #include <iostream>
 
-struct MockAddressingMode : public AddressingMode {
-  byte value;
-  bool called = false;
+extern AddressingMode kMockAddressMode;
 
-  MockAddressingMode(byte val) : value(val) {}
-
-  byte Read(CPU &) const override {
-    return value;
-  }
-  void Write(CPU &, byte writing) const override {
-    value = writing;
-  }
-  void Modify(CPU &, const std::function<byte(byte)> & func) const override {
-    value = func(value);
-  }
-};
+void SetMockAddressValue(const byte value);
+byte MockAddressValue();
 
 #endif //CSIM6502_MOCKADDRESSINGMODE_HH

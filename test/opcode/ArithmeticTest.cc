@@ -9,18 +9,18 @@
 
 #include "opcode/Arithmetic.hh"
 
-MockRAM ram {
+static MockRAM ram {
   0x1d, 0x42, 0xaf, 0x4b, 0xc6, 0x92, 0x17, 0xa4
 };
-CPU cpu(&ram);
+static CPU cpu(&ram);
 
 #define ASSERT_OPERATION(initial_ac, initial_carry, code, result_ac) do { \
-  MockAddressingMode mode(0x66); \
+  SetMockAddressValue(0x66); \
   cpu.Reset(); \
   cpu.ac = initial_ac; \
   cpu.status.carry = initial_carry; \
 \
-  opcode::code(cpu, mode); \
+  opcode::code(cpu, kMockAddressMode); \
 \
   ASSERT_EQ(cpu.ac, result_ac); \
 } while (0)
@@ -81,21 +81,21 @@ TEST(ArithmeticOpcode, SBC_NoOverflowCarry) {
 
 TEST(ArithmeticOpcode, INC) {
   cpu.Reset();
-  MockAddressingMode address(0x7f);
+  SetMockAddressValue(0x7f);
 
-  opcode::INC(cpu, address);
+  opcode::INC(cpu, kMockAddressMode);
 
-  ASSERT_EQ(address.value, 0x80);
+  ASSERT_EQ(MockAddressValue(), 0x80);
   ASSERT_TRUE(cpu.status.negative_result);
 }
 
 TEST(ArithmeticOpcode, DEC) {
   cpu.Reset();
-  MockAddressingMode address(0xf2);
+  SetMockAddressValue(0xf2);
 
-  opcode::DEC(cpu, address);
+  opcode::DEC(cpu, kMockAddressMode);
 
-  ASSERT_EQ(address.value, 0xf1);
+  ASSERT_EQ(MockAddressValue(), 0xf1);
   ASSERT_TRUE(cpu.status.negative_result);
 }
 
@@ -133,11 +133,11 @@ TEST(ArithmeticOpcode, INX_INY) {
 }
 
 #define ASSERT_OPCODE_SETS_ACCUMULATOR(code, prev_ac, result) do { \
-  MockAddressingMode mode(0x66); \
+  SetMockAddressValue(0x66); \
   cpu.Reset(); \
   cpu.ac = prev_ac; \
 \
-  opcode::code(cpu, mode); \
+  opcode::code(cpu, kMockAddressMode); \
 \
   ASSERT_EQ(cpu.ac, (result)); \
 } while (0)
@@ -163,20 +163,20 @@ TEST(ArithmeticOpcode, BIT) {
   cpu.Reset();
   cpu.ac = 0x5f;
 
-  MockAddressingMode address(0b10010100);
-  opcode::BIT(cpu, address);
+  SetMockAddressValue(0b10010100U);
+  opcode::BIT(cpu, kMockAddressMode);
   ASSERT_TRUE(cpu.status.negative_result);
   ASSERT_FALSE(cpu.status.overflow);
   ASSERT_FALSE(cpu.status.zero_result);
 
-  address = 0b01001001U;
-  opcode::BIT(cpu, address);
+  SetMockAddressValue(0b01001001U);
+  opcode::BIT(cpu, kMockAddressMode);
   ASSERT_FALSE(cpu.status.negative_result);
   ASSERT_TRUE(cpu.status.overflow);
   ASSERT_FALSE(cpu.status.zero_result);
 
-  address = 0x0;
-  opcode::BIT(cpu, address);
+  SetMockAddressValue(0x0);
+  opcode::BIT(cpu, kMockAddressMode);
   ASSERT_FALSE(cpu.status.negative_result);
   ASSERT_FALSE(cpu.status.overflow);
   ASSERT_TRUE(cpu.status.zero_result);
@@ -184,18 +184,18 @@ TEST(ArithmeticOpcode, BIT) {
 
 TEST(ArithmeticOpcode, ASL) {
   cpu.Reset();
-  MockAddressingMode memory(0b10010100);
+  SetMockAddressValue(0b10010100U);
 
-  opcode::ASL(cpu, memory);
+  opcode::ASL(cpu, kMockAddressMode);
 
-  ASSERT_EQ(memory.value, 0b00101000);
+  ASSERT_EQ(MockAddressValue(), 0b00101000U);
   ASSERT_TRUE(cpu.status.carry);
   ASSERT_FALSE(cpu.status.negative_result);
 
   cpu.Reset();
   cpu.ac = 0b01101101;
 
-  opcode::ASL(cpu, address::Accum());
+  opcode::ASL(cpu, address::Accum);
 
   ASSERT_EQ(cpu.ac, 0b11011010);
   ASSERT_FALSE(cpu.status.carry);
@@ -204,17 +204,17 @@ TEST(ArithmeticOpcode, ASL) {
 
 TEST(ArithmeticOpcode, LSR) {
   cpu.Reset();
-  MockAddressingMode memory(0b11100101);
+  SetMockAddressValue(0b11100101U);
 
-  opcode::LSR(cpu, memory);
+  opcode::LSR(cpu, kMockAddressMode);
 
-  ASSERT_EQ(memory.value, 0b01110010);
+  ASSERT_EQ(MockAddressValue(), 0b01110010U);
   ASSERT_TRUE(cpu.status.carry);
 
   cpu.Reset();
   cpu.ac = 0b00101110;
 
-  opcode::LSR(cpu, address::Accum());
+  opcode::LSR(cpu, address::Accum);
 
   ASSERT_EQ(cpu.ac, 0b00010111);
   ASSERT_FALSE(cpu.status.carry);
@@ -223,18 +223,18 @@ TEST(ArithmeticOpcode, LSR) {
 TEST(ArithmeticOpcode, ROL) {
   cpu.Reset();
   cpu.status.carry = true;
-  MockAddressingMode memory(0b01001110);
+  SetMockAddressValue(0b01001110U);
 
-  opcode::ROL(cpu, memory);
+  opcode::ROL(cpu, kMockAddressMode);
 
-  ASSERT_EQ(memory.value, 0b10011101);
+  ASSERT_EQ(MockAddressValue(), 0b10011101U);
   ASSERT_TRUE(cpu.status.negative_result);
   ASSERT_FALSE(cpu.status.carry);
 
   cpu.Reset();
   cpu.ac = 0b11001100;
 
-  opcode::ROL(cpu, address::Accum());
+  opcode::ROL(cpu, address::Accum);
 
   ASSERT_EQ(cpu.ac, 0b10011000);
   ASSERT_TRUE(cpu.status.carry);
@@ -243,18 +243,18 @@ TEST(ArithmeticOpcode, ROL) {
 TEST(ArithmeticOpcode, ROR) {
   cpu.Reset();
   cpu.status.carry = true;
-  MockAddressingMode memory(0b11010101);
+  SetMockAddressValue(0b11010101);
 
-  opcode::ROR(cpu, memory);
+  opcode::ROR(cpu, kMockAddressMode);
 
-  ASSERT_EQ(memory.value, 0b11101010);
+  ASSERT_EQ(MockAddressValue(), 0b11101010);
   ASSERT_TRUE(cpu.status.carry);
   ASSERT_TRUE(cpu.status.negative_result);
 
   cpu.Reset();
   cpu.ac = 0b00110100;
 
-  opcode::ROR(cpu, address::Accum());
+  opcode::ROR(cpu, address::Accum);
 
   ASSERT_EQ(cpu.ac, 0b00011010);
   ASSERT_FALSE(cpu.status.carry);
@@ -262,10 +262,10 @@ TEST(ArithmeticOpcode, ROR) {
 
 #define GIVEN_REG_MEM_VALUES_WHEN_CODE_CALLED(reg_name, reg_value, mem_value, code) \
   cpu.Reset(); \
-  MockAddressingMode memory((mem_value)); \
+  SetMockAddressValue((mem_value)); \
   cpu.reg_name = (reg_value); \
 \
-  opcode::code(cpu, memory);
+  opcode::code(cpu, kMockAddressMode);
 
 #define ASSERT_FLAGS_FOR_GREATER_REGISTER_AFTER_OPCODE(reg_name, reg_value, mem_value, code) \
   GIVEN_REG_MEM_VALUES_WHEN_CODE_CALLED(reg_name, reg_value, mem_value, code) \

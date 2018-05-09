@@ -8,10 +8,10 @@
 
 #include "opcode/Jump.hh"
 
-MockRAM ram {
+static MockRAM ram {
   0x02, 0x00, 0xda, 0x2c, 0x63, 0x8b, 0xaf, 0xf5
 };
-CPU cpu(&ram);
+static CPU cpu(&ram);
 
 static constexpr word kStartPc(0x2121);
 

@@ -9,10 +9,10 @@
 
 #include "opcode/Storage.hh"
 
-MockRAM ram {
+static MockRAM ram {
   0x14, 0xfa, 0xbd, 0xdc
 };
-CPU cpu(&ram);
+static CPU cpu(&ram);
 
 #define ASSERT_OPCODE_MAKES(code, flag, condition) TEST(StorageOpcode, code) { \
   cpu.status.flag = !(condition); \
@@ -21,9 +21,9 @@ CPU cpu(&ram);
 }
 #define ASSERT_OPCODE_LOADS_MEMORY_TO(code, reg) TEST(StorageOpcode, code) { \
   cpu.reg = 0x02; \
-  const MockAddressingMode addressor(0x9a); \
+  SetMockAddressValue(0x9a); \
 \
-  opcode::code(cpu, addressor); \
+  opcode::code(cpu, kMockAddressMode); \
 \
   ASSERT_EQ(cpu.reg, 0x9a); \
 \
@@ -31,13 +31,13 @@ CPU cpu(&ram);
   cpu.status.negative_result = false; \
 }
 #define ASSERT_OPCODE_STORES_TO_MEMORY_FROM(code, reg) TEST(StorageOpcode, code) { \
-  const MockAddressingMode addressor(0xf2); \
+  SetMockAddressValue(0xf2); \
   cpu.Reset(); \
   cpu.reg = 0x2d; \
 \
-  opcode::code(cpu, addressor); \
+  opcode::code(cpu, kMockAddressMode); \
 \
-  ASSERT_EQ(addressor.value, 0x2d); \
+  ASSERT_EQ(MockAddressValue(), 0x2d); \
 }
 #define ASSERT_OPCODE_TRANFERS(code, src, dest) TEST(StorageOpcode, code) { \
   cpu.Reset(); \

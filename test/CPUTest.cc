@@ -7,10 +7,10 @@
 #include "Util.hh"
 #include "MockRAM.hh"
 
-MockRAM ram {
+static MockRAM ram {
     0x13, 0x79, 0xac, 0xde
 };
-CPU cpu(&ram);
+static CPU cpu(&ram);
 
 TEST(StatusFlags, ToFromByte) {
   StatusFlags flags {

@@ -8,10 +8,10 @@
 #include "CPU.hh"
 #include "opcode/Stack.hh"
 
-MockRAM ram {
+static MockRAM ram {
     0x1d, 0x4a, 0x1d, 0xbf, 0x57, 0xaf, 0xf4, 0x01
 };
-CPU cpu(&ram);
+static CPU cpu(&ram);
 
 TEST(StackOpcode, PHA) {
   cpu.ac = 0xce;
