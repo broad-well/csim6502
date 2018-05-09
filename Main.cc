@@ -31,7 +31,7 @@ struct ConsoleHook : public Hook {
   }
   void OnWrite(RAM &, word address, byte value) const override {
     if (address == 0xDEAD)
-      std::cout << (int)value;
+      std::cout << static_cast<int>(value);
     else
       std::cout << value;
   }
@@ -46,6 +46,7 @@ double NsPerCycle() {
   return std::chrono::duration<double, std::nano>(now - start_time).count() / cycle_count;
 }
 
+[[noreturn]]
 void BreakAndAbort(int) {
   std::cout << "USER BREAK" << std::endl;
   cpu.DumpRegisterInfo(std::cout);

@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 #include "MockRAM.hh"
 
-MockRAM ram {
+static MockRAM ram {
   0x14, 0xd2, 0xa2, 0x5f, 0xe1, 0xbb, 0xae, 0x5d
 };
 

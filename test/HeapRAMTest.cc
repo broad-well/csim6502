@@ -8,7 +8,7 @@
 TEST(HeapRAM, ReadInRange)
 {
   constexpr auto data = "Read my RAM";
-  HeapRAM ram((byte*)data, strlen(data));
+  HeapRAM ram(reinterpret_cast<const byte*>(data), strlen(data));
 
   ASSERT_EQ(ram.Read(0x00), 'R');
   ASSERT_EQ(ram.Read(0x01), 'e');
@@ -20,7 +20,7 @@ TEST(HeapRAM, WriteInRange)
 {
   auto data = "Change my RAM";
   HeapRAM ram(strlen(data));
-  ram.Load((byte*) data);
+  ram.Load(reinterpret_cast<const byte*>(data));
 
   ram.Write(0xa, 'c');
   ram.Write(0xb, 'a');

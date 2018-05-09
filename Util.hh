@@ -25,7 +25,7 @@ namespace format {
 
 namespace bit {
   inline uint16_t AsWord(const byte low, const byte high = 0) {
-    return (high << 8U) + low;
+    return static_cast<uint16_t>((high << 8U) + low);
   }
 
   inline uint8_t LowByte(const word input) {

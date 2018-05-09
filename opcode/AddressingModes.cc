@@ -37,9 +37,11 @@ DEFINE_MEMORY_MODE(IndY, cpu.memory->ReadWord(cpu.NextCodeByte()) + cpu.y)
 byte ImRead(CPU &cpu) {
   return cpu.NextCodeByte();
 }
+[[noreturn]]
 void ImWrite(CPU &, byte) {
   throw std::invalid_argument("Cannot write to Immediate target");
 }
+[[noreturn]]
 void ImModify(CPU &, const std::function<byte(byte)> &) {
   throw std::invalid_argument("Cannot modify Immediate target");
 }

@@ -57,7 +57,7 @@ class HeapRAM : public RAM {
   public:
 
   explicit HeapRAM(size_t size);
-  HeapRAM(const byte *src, size_t size);
+  HeapRAM(const byte* src, size_t size);
   ~HeapRAM();
 
   void Load(const byte* source);

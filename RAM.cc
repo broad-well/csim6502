@@ -41,7 +41,7 @@ void RAM::Write(const word address, const byte value) {
 word RAM::ReadWord(word address) {
   // Little endian
   byte low(Read(address)),
-      high(Read(address + (word) sizeof(byte)));
+      high(Read(address + sizeof(byte)));
 
   return bit::AsWord(low, high);
 }
