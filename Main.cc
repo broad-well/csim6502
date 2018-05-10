@@ -4,11 +4,13 @@
 
 #include "opcode/Decoder.hh"
 #include "CPU.hh"
-#include "RAM.hh"
+#include "HeapRAM.hh"
 #include <iostream>
 #include <fstream>
 #include <csignal>
 #include <chrono>
+
+using namespace std;
 
 constexpr int kMemorySize = 65536;
 
@@ -16,7 +18,7 @@ static HeapRAM memory(kMemorySize);
 static CPU cpu(&memory);
 
 // Speed measuring
-static auto start_time = std::chrono::high_resolution_clock::now();
+static auto start_time = chrono::high_resolution_clock::now();
 static unsigned long long cycle_count(0);
 
 struct ConsoleHook : public Hook {
@@ -31,9 +33,9 @@ struct ConsoleHook : public Hook {
   }
   void OnWrite(RAM &, word address, byte value) const override {
     if (address == 0xDEAD)
-      std::cout << static_cast<int>(value);
+      cout << static_cast<int>(value);
     else
-      std::cout << value;
+      cout << value;
   }
 };
 
@@ -42,22 +44,22 @@ void AddConsoleRAMHook() {
 }
 
 double NsPerCycle() {
-  auto now = std::chrono::high_resolution_clock::now();
-  return std::chrono::duration<double, std::nano>(now - start_time).count() / cycle_count;
+  auto now = chrono::high_resolution_clock::now();
+  return chrono::duration<double, nano>(now - start_time).count() / cycle_count;
 }
 
 [[noreturn]]
 void BreakAndAbort(int) {
-  std::cout << "USER BREAK" << std::endl;
-  cpu.DumpRegisterInfo(std::cout);
+  cout << "USER BREAK" << endl;
+  cpu.DumpRegisterInfo(cout);
 
   auto ns(NsPerCycle());
-  std::cout << std::endl << "Ns per cycle = " << ns << " -> " << 1/ns*1e3 << " MHz. CPU halted. Exiting." << std::endl;
-  std::exit(0);
+  cout << endl << "Ns per cycle = " << ns << " -> " << 1/ns*1e3 << " MHz. CPU halted. Exiting." << endl;
+  exit(0);
 }
 
 void LoadMemoryFromFile(char *const *argv) {
-  std::ifstream input(argv[1], std::ios::binary);
+  ifstream input(argv[1], ios::binary);
 
   byte input_buffer[kMemorySize];
   byte ptr = 0;

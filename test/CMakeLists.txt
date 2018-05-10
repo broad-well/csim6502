@@ -13,6 +13,6 @@ target_link_libraries(BaseTest gtest gtest_main gmock csim6502_base pthread)
 add_test(BaseTest BaseTest)
 
 file(GLOB OPCODE_TEST_FILES opcode/*Test.cc)
-add_executable(OpcodeTest ${OPCODE_TEST_FILES} opcode/MockAddressingMode.cc)
+add_executable(OpcodeTest ${OPCODE_TEST_FILES} opcode/mockaddressingmode.cc)
 target_link_libraries(OpcodeTest gtest gtest_main gmock csim6502_base csim6502_opcode pthread)
 add_test(OpcodeTest OpcodeTest)

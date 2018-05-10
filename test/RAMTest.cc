@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include "MockRAM.hh"
-#include "RAM.hh"
+#include "HeapRAM.hh"
 #include "types.hh"
 
 using namespace ::testing;

@@ -10,6 +10,11 @@
 #include "RAM.hh"
 #include "Util.hh"
 
+using std::unique_ptr;
+using std::memcpy;
+using std::out_of_range;
+using std::to_string;
+
 byte Hook::loadFrom(RAM &src, word address) const {
   return src.readStoredValue(address);
 }
@@ -57,36 +62,9 @@ void RAM::ClearHooks() {
   hooks.clear();
 }
 
-const std::unique_ptr<Hook> *RAM::FindHook(word address) {
+const unique_ptr<Hook> *RAM::FindHook(word address) {
   for (auto &hook : hooks)
     if (hook->ShouldAddressAccessRedirect(address))
       return &hook;
   return nullptr;
-}
-
-HeapRAM::HeapRAM(size_t size) : size(size) {
-  pool = new uint8_t[size];
-}
-
-HeapRAM::HeapRAM(const byte *src, size_t size) : HeapRAM(size) {
-  std::memcpy(pool, src, size);
-}
-
-HeapRAM::~HeapRAM() {
-
-  delete[] pool;
-}
-void HeapRAM::checkAddress(const uint16_t address) const {
-  if (address >= size) {
-    throw std::out_of_range("Address out of range: " + std::to_string(address));
-  }
-}
-byte HeapRAM::readStoredValue(word address) {
-  return pool[address];
-}
-void HeapRAM::storeValue(word address, byte value) {
-  pool[address] = value;
-}
-void HeapRAM::Load(const byte *source) {
-  std::memcpy(pool, source, size);
 }

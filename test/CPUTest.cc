@@ -71,7 +71,7 @@ TEST(CPU, JumpRelativeZero) {
 TEST(CPU, JumpRelativeBackward) {
   cpu.pc = 0x3a3a;
 
-  cpu.JumpRelative(0xe6);
+  cpu.JumpRelative(static_cast<const signed_byte>(0xe6));
 
   ASSERT_EQ(cpu.pc, 0x3a3a - 0x1a);
 }

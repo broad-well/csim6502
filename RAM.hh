@@ -53,22 +53,4 @@ class RAM {
   friend class Hook;
 };
 
-class HeapRAM : public RAM {
-  public:
-
-  explicit HeapRAM(size_t size);
-  HeapRAM(const byte* src, size_t size);
-  ~HeapRAM();
-
-  void Load(const byte* source);
-
-  private:
-
-  byte *pool;
-  size_t size;
-
-  byte readStoredValue(word address) override;
-  void storeValue(word address, byte value) override;
-  void checkAddress(word address) const override;
-};
 #endif //CSIM6502_RAM_HH

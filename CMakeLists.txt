@@ -3,7 +3,7 @@ include(CMakeCommon.txt)
 
 project(csim6502 CXX)
 
-add_library(csim6502_base CPU.cc CPU.hh RAM.cc RAM.hh Util.hh types.hh)
+add_library(csim6502_base CPU.cc RAM.cc HeapRAM.cc)
 
 add_subdirectory(test/)
 add_subdirectory(opcode/)

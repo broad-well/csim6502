@@ -6,6 +6,12 @@
 #include "CPU.hh"
 #include "Util.hh"
 
+using std::string;
+using std::ostream;
+using std::cout;
+using std::overflow_error;
+using std::underflow_error;
+
 constexpr word kStackFirst(0x01FF);
 constexpr word kStackLast(0x0100);
 
@@ -21,7 +27,7 @@ byte StatusFlags::ToByte() const {
 void StatusFlags::Clear() {
   memset(this, 0, sizeof(StatusFlags));
 }
-std::string StatusFlags::ToString() const {
+string StatusFlags::ToString() const {
   using namespace std;
 
   stringstream stream;
@@ -53,7 +59,7 @@ void CPU::JumpRelative(const signed_byte offset) {
   pc += offset;
 }
 
-void CPU::DumpRegisterInfo(std::ostream &out) const {
+void CPU::DumpRegisterInfo(ostream &out) const {
   char out_str[38];
 
   sprintf(out_str, "X=%02X Y=%02X A=%02X\nSP=%02X PC=%04X\n%s",
@@ -64,7 +70,7 @@ void CPU::DumpRegisterInfo(std::ostream &out) const {
 
 void CPU::IncrementProgramCounter() {
   if (pc == 0xffff)
-    throw std::overflow_error("Incrementing Program Counter (PC) at 0xffff causes overflow");
+    throw overflow_error("Incrementing Program Counter (PC) at 0xffff causes overflow");
   ++pc;
 }
 
@@ -83,7 +89,7 @@ word CPU::NextOperandWord() {
 
 void CPU::PushByteToStack(byte value) {
   if (sp == kStackLast)
-    throw std::overflow_error("Attempt to push byte onto full stack");
+    throw overflow_error("Attempt to push byte onto full stack");
 
   memory->Write(sp--, value);
 }
@@ -97,7 +103,7 @@ void CPU::PushWordToStack(word value) {
 
 byte CPU::PullByteFromStack() {
   if (sp == kStackFirst)
-    throw std::underflow_error("Attempt to pull byte from empty stack");
+    throw underflow_error("Attempt to pull byte from empty stack");
 
   return memory->Read(++sp);
 }

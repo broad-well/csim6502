@@ -9,7 +9,6 @@
 #include <iostream>
 #include "types.hh"
 #include "RAM.hh"
-
 // C Z I D B _ V N
 struct StatusFlags {
   bool carry : 1,
