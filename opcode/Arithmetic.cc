@@ -100,7 +100,7 @@ MONADIC_OPCODE(BIT) {
 OPCODE_MODIFIES_VALUE_AND_SETS_CARRY(ASL, bit::IsNthBitSet(value, 7), value << 1U)
 OPCODE_MODIFIES_VALUE_AND_SETS_CARRY(LSR, bit::IsNthBitSet(value, 0), value >> 1U)
 OPCODE_MODIFIES_VALUE_AND_SETS_CARRY(ROL, bit::IsNthBitSet(value, 7), (value << 1U) | cpu.status.carry)
-OPCODE_MODIFIES_VALUE_AND_SETS_CARRY(ROR, bit::IsNthBitSet(value, 0), (value >> 1U) | (cpu.status.carry << 7))
+OPCODE_MODIFIES_VALUE_AND_SETS_CARRY(ROR, bit::IsNthBitSet(value, 0), (value >> 1U) | (cpu.status.carry << 7U))
 
 #undef OPCODE_MODIFIES_VALUE_AND_SETS_CARRY
 

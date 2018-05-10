@@ -1,5 +1,6 @@
 #include "HeapRAM.hh"
 #include <cstring>
+#include <string>
 
 using namespace std;
 

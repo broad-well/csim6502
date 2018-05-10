@@ -12,8 +12,8 @@ using std::cout;
 using std::overflow_error;
 using std::underflow_error;
 
-constexpr word kStackFirst(0x01FF);
-constexpr word kStackLast(0x0100);
+constexpr byte kStackFirst(0xFF);
+constexpr byte kStackLast(0x00);
 
 void StatusFlags::LoadFromByte(const byte &data) {
   memcpy(this, &data, sizeof(StatusFlags));
@@ -44,7 +44,7 @@ string StatusFlags::ToString() const {
 }
 
 CPU::CPU(RAM* memory) :
-    x(0), y(0), ac(0), pc(0), sp(kStackFirst),
+    x(0), y(0), ac(0), sp(kStackFirst), pc(0),
     status(), memory(memory) {
 
   status.Clear();
@@ -87,12 +87,17 @@ word CPU::NextOperandWord() {
   return bit::AsWord(low, high);
 }
 
+word AddressAtStackPtr(const byte ptr_value) {
+  return 0x100 + ptr_value;
+}
+
 void CPU::PushByteToStack(byte value) {
   if (sp == kStackLast)
     throw overflow_error("Attempt to push byte onto full stack");
 
-  memory->Write(sp--, value);
+  memory->Write(AddressAtStackPtr(sp--), value);
 }
+
 void CPU::PushWordToStack(word value) {
   byte low(bit::LowByte(value)),
       high(bit::HighByte(value));
@@ -105,7 +110,7 @@ byte CPU::PullByteFromStack() {
   if (sp == kStackFirst)
     throw underflow_error("Attempt to pull byte from empty stack");
 
-  return memory->Read(++sp);
+  return memory->Read(AddressAtStackPtr(++sp));
 }
 word CPU::PullWordFromStack() {
   byte low(PullByteFromStack()),

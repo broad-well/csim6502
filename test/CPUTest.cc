@@ -160,7 +160,7 @@ TEST(CPU, StackUnderflow) {
 
 TEST(CPU, Reset) {
   cpu.pc = 0xDAEB;
-  cpu.sp = 0x1551;
+  cpu.sp = 0x51;
   cpu.x = 0xAE;
   cpu.y = 0xB8;
   cpu.ac = 0x1D;
@@ -169,7 +169,7 @@ TEST(CPU, Reset) {
   cpu.Reset();
 
   ASSERT_EQ(cpu.pc, 0x0000);
-  ASSERT_NE(cpu.sp, 0x1551);
+  ASSERT_NE(cpu.sp, 0x51);
   ASSERT_EQ(cpu.x, 0x00);
   ASSERT_EQ(cpu.y, 0x00);
   ASSERT_EQ(cpu.ac, 0x00);

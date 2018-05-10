@@ -31,10 +31,10 @@ struct CPU {
   byte
       x,
       y,
-      ac; // Accumulator
-  word
-      pc, // Program counter
+      ac, // Accumulator
       sp; // Stack pointer
+  word
+      pc; // Program counter
 
   StatusFlags status;
   RAM* memory;
