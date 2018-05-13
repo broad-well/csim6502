@@ -5,8 +5,7 @@
 #include <gtest/gtest.h>
 #include "HeapRAM.hh"
 
-TEST(HeapRAM, ReadInRange)
-{
+TEST(HeapRAM, ReadInRange) {
   constexpr auto data = "Read my RAM";
   HeapRAM ram(reinterpret_cast<const byte*>(data), strlen(data));
 
@@ -16,8 +15,7 @@ TEST(HeapRAM, ReadInRange)
   ASSERT_EQ(ram.Read(0x0a), 'M');
 }
 
-TEST(HeapRAM, WriteInRange)
-{
+TEST(HeapRAM, WriteInRange) {
   auto data = "Change my RAM";
   HeapRAM ram(strlen(data));
   ram.Load(reinterpret_cast<const byte*>(data));
@@ -39,9 +37,7 @@ TEST(HeapRAM, AccessOutOfRange) {
 }
 
 TEST(HeapRAM, ReadWord) {
-  byte data[] {
-    0x03, 0x15, 0xaf, 0x4d, 0xb3, 0x9e
-  };
+  byte data[]{0x03, 0x15, 0xaf, 0x4d, 0xb3, 0x9e};
   HeapRAM ram(data, 6);
 
   ASSERT_EQ(ram.ReadWord(0x00), 0x1503);
@@ -50,9 +46,7 @@ TEST(HeapRAM, ReadWord) {
 }
 
 TEST(HeapRAM, WriteWord) {
-  byte data[] {
-    0x41, 0x13, 0xfc, 0xb4
-  };
+  byte data[]{0x41, 0x13, 0xfc, 0xb4};
   HeapRAM ram(4);
   ram.Load(data);
 

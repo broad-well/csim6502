@@ -2,13 +2,13 @@
 // Created by Michael Peng on 5/6/18.
 //
 
-#include "opcode/Decoder.hh"
+#include <chrono>
+#include <csignal>
+#include <fstream>
+#include <iostream>
 #include "CPU.hh"
 #include "HeapRAM.hh"
-#include <iostream>
-#include <fstream>
-#include <csignal>
-#include <chrono>
+#include "opcode/Decoder.hh"
 
 using namespace std;
 
@@ -28,9 +28,7 @@ struct ConsoleHook : public Hook {
     return address == 0xFACE || address == 0xDEAD;
   }
 
-  byte OnRead(RAM &, word) const override {
-    return 0x00;
-  }
+  byte OnRead(RAM &, word) const override { return 0x00; }
   void OnWrite(RAM &, word address, byte value) const override {
     if (address == 0xDEAD)
       cout << static_cast<int>(value);
@@ -39,9 +37,7 @@ struct ConsoleHook : public Hook {
   }
 };
 
-void AddConsoleRAMHook() {
-  memory.AddHook(new ConsoleHook());
-}
+void AddConsoleRAMHook() { memory.AddHook(new ConsoleHook()); }
 
 double NsPerCycle() {
   auto now = chrono::high_resolution_clock::now();
@@ -54,7 +50,9 @@ void BreakAndAbort(int) {
   cpu.DumpRegisterInfo(cout);
 
   auto ns(NsPerCycle());
-  cout << endl << "Ns per cycle = " << ns << " -> " << 1/ns*1e3 << " MHz. CPU halted. Exiting." << endl;
+  cout << endl
+       << "Ns per cycle = " << ns << " -> " << 1 / ns * 1e3
+       << " MHz. CPU halted. Exiting." << endl;
   exit(0);
 }
 
@@ -70,7 +68,7 @@ void LoadMemoryFromFile(char *const *argv) {
   memory.Load(input_buffer);
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
   using namespace std;
 
   signal(SIGINT, BreakAndAbort);

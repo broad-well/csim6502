@@ -4,18 +4,14 @@
 
 #include <gtest/gtest.h>
 #include "CPU.hh"
-#include "Util.hh"
 #include "MockRAM.hh"
+#include "Util.hh"
 
-static MockRAM ram {
-    0x13, 0x79, 0xac, 0xde
-};
+static MockRAM ram{0x13, 0x79, 0xac, 0xde};
 static CPU cpu(&ram);
 
 TEST(StatusFlags, ToFromByte) {
-  StatusFlags flags {
-      true, false, false, true, false, true, true, false
-  };
+  StatusFlags flags{true, false, false, true, false, true, true, false};
   ASSERT_EQ(flags.ToByte(), 0b01101001);
 
   StatusFlags clone;
@@ -96,9 +92,8 @@ TEST(CPU, DumpRegisterInfo) {
   cpu.JumpRelative(static_cast<signed_byte>(0x9e));
 
   char expected[39];
-  sprintf(expected, "X=%02X Y=%02X A=%02X\nSP=%02X PC=%04X\n%s",
-      cpu.x, cpu.y, cpu.ac, cpu.sp, cpu.pc,
-          cpu.status.ToString().c_str());
+  sprintf(expected, "X=%02X Y=%02X A=%02X\nSP=%02X PC=%04X\n%s", cpu.x, cpu.y,
+          cpu.ac, cpu.sp, cpu.pc, cpu.status.ToString().c_str());
 
   std::stringstream stream;
   cpu.DumpRegisterInfo(stream);

@@ -9,21 +9,20 @@
 
 #include "opcode/Arithmetic.hh"
 
-static MockRAM ram {
-  0x1d, 0x42, 0xaf, 0x4b, 0xc6, 0x92, 0x17, 0xa4
-};
+static MockRAM ram{0x1d, 0x42, 0xaf, 0x4b, 0xc6, 0x92, 0x17, 0xa4};
 static CPU cpu(&ram);
 
-#define ASSERT_OPERATION(initial_ac, initial_carry, code, result_ac) do { \
-  SetMockAddressValue(0x66); \
-  cpu.Reset(); \
-  cpu.ac = initial_ac; \
-  cpu.status.carry = initial_carry; \
-\
-  opcode::code(cpu, kMockAddressMode); \
-\
-  ASSERT_EQ(cpu.ac, result_ac); \
-} while (0)
+#define ASSERT_OPERATION(initial_ac, initial_carry, code, result_ac) \
+  do {                                                               \
+    SetMockAddressValue(0x66);                                       \
+    cpu.Reset();                                                     \
+    cpu.ac = initial_ac;                                             \
+    cpu.status.carry = initial_carry;                                \
+                                                                     \
+    opcode::code(cpu, kMockAddressMode);                             \
+                                                                     \
+    ASSERT_EQ(cpu.ac, result_ac);                                    \
+  } while (0)
 
 TEST(ArithmeticOpcode, ADC_OverflowNoCarry) {
   ASSERT_OPERATION(0x24, false, ADC, 0x8a);
@@ -132,15 +131,16 @@ TEST(ArithmeticOpcode, INX_INY) {
   ASSERT_TRUE(cpu.status.zero_result);
 }
 
-#define ASSERT_OPCODE_SETS_ACCUMULATOR(code, prev_ac, result) do { \
-  SetMockAddressValue(0x66); \
-  cpu.Reset(); \
-  cpu.ac = prev_ac; \
-\
-  opcode::code(cpu, kMockAddressMode); \
-\
-  ASSERT_EQ(cpu.ac, (result)); \
-} while (0)
+#define ASSERT_OPCODE_SETS_ACCUMULATOR(code, prev_ac, result) \
+  do {                                                        \
+    SetMockAddressValue(0x66);                                \
+    cpu.Reset();                                              \
+    cpu.ac = prev_ac;                                         \
+                                                              \
+    opcode::code(cpu, kMockAddressMode);                      \
+                                                              \
+    ASSERT_EQ(cpu.ac, (result));                              \
+  } while (0)
 
 TEST(ArithmeticOpcode, AND) {
   ASSERT_OPCODE_SETS_ACCUMULATOR(AND, 0x24U, 0x24U & 0x66U);
@@ -260,41 +260,47 @@ TEST(ArithmeticOpcode, ROR) {
   ASSERT_FALSE(cpu.status.carry);
 }
 
-#define GIVEN_REG_MEM_VALUES_WHEN_CODE_CALLED(reg_name, reg_value, mem_value, code) \
-  cpu.Reset(); \
-  SetMockAddressValue((mem_value)); \
-  cpu.reg_name = (reg_value); \
-\
+#define GIVEN_REG_MEM_VALUES_WHEN_CODE_CALLED(reg_name, reg_value, mem_value, \
+                                              code)                           \
+  cpu.Reset();                                                                \
+  SetMockAddressValue((mem_value));                                           \
+  cpu.reg_name = (reg_value);                                                 \
+                                                                              \
   opcode::code(cpu, kMockAddressMode);
 
-#define ASSERT_FLAGS_FOR_GREATER_REGISTER_AFTER_OPCODE(reg_name, reg_value, mem_value, code) \
+#define ASSERT_FLAGS_FOR_GREATER_REGISTER_AFTER_OPCODE(reg_name, reg_value,   \
+                                                       mem_value, code)       \
   GIVEN_REG_MEM_VALUES_WHEN_CODE_CALLED(reg_name, reg_value, mem_value, code) \
-  ASSERT_FALSE(cpu.status.zero_result); \
-  ASSERT_FALSE(cpu.status.negative_result); \
+  ASSERT_FALSE(cpu.status.zero_result);                                       \
+  ASSERT_FALSE(cpu.status.negative_result);                                   \
   ASSERT_TRUE(cpu.status.carry);
 
-#define ASSERT_FLAGS_FOR_EQUALITY_AFTER_OPCODE(reg_name, reg_value, mem_value, code) \
-  GIVEN_REG_MEM_VALUES_WHEN_CODE_CALLED(reg_name, reg_value, mem_value, code) \
-  ASSERT_TRUE(cpu.status.zero_result); \
-  ASSERT_FALSE(cpu.status.negative_result); \
+#define ASSERT_FLAGS_FOR_EQUALITY_AFTER_OPCODE(reg_name, reg_value, mem_value, \
+                                               code)                           \
+  GIVEN_REG_MEM_VALUES_WHEN_CODE_CALLED(reg_name, reg_value, mem_value, code)  \
+  ASSERT_TRUE(cpu.status.zero_result);                                         \
+  ASSERT_FALSE(cpu.status.negative_result);                                    \
   ASSERT_TRUE(cpu.status.carry);
 
-#define ASSERT_FLAGS_FOR_LOWER_REGISTER_AFTER_OPCODE(reg_name, reg_value, mem_value, code) \
+#define ASSERT_FLAGS_FOR_LOWER_REGISTER_AFTER_OPCODE(reg_name, reg_value,     \
+                                                     mem_value, code)         \
   GIVEN_REG_MEM_VALUES_WHEN_CODE_CALLED(reg_name, reg_value, mem_value, code) \
-  ASSERT_FALSE(cpu.status.zero_result); \
-  ASSERT_TRUE(cpu.status.negative_result); \
+  ASSERT_FALSE(cpu.status.zero_result);                                       \
+  ASSERT_TRUE(cpu.status.negative_result);                                    \
   ASSERT_FALSE(cpu.status.carry);
 
-#define TEST_FOR_ALL_CONDITIONS_WITH_OPCODE_COMPARING_BETWEEN_MEMORY_AND(code, reg_name) \
-TEST(ArithmeticOpcode, _##code##_Greater_Register) { \
-  ASSERT_FLAGS_FOR_GREATER_REGISTER_AFTER_OPCODE(reg_name, 0x81, 0x5F, code); \
-} \
-TEST(ArithmeticOpcode, _##code##_Equal) { \
-  ASSERT_FLAGS_FOR_EQUALITY_AFTER_OPCODE(reg_name, 0x91, 0x91, code); \
-} \
-TEST(ArithmeticOpcode, _##code##_Less_Register) { \
-  ASSERT_FLAGS_FOR_LOWER_REGISTER_AFTER_OPCODE(reg_name, 0x52, 0x61, code); \
-}
+#define TEST_FOR_ALL_CONDITIONS_WITH_OPCODE_COMPARING_BETWEEN_MEMORY_AND(     \
+    code, reg_name)                                                           \
+  TEST(ArithmeticOpcode, _##code##_Greater_Register) {                        \
+    ASSERT_FLAGS_FOR_GREATER_REGISTER_AFTER_OPCODE(reg_name, 0x81, 0x5F,      \
+                                                   code);                     \
+  }                                                                           \
+  TEST(ArithmeticOpcode, _##code##_Equal) {                                   \
+    ASSERT_FLAGS_FOR_EQUALITY_AFTER_OPCODE(reg_name, 0x91, 0x91, code);       \
+  }                                                                           \
+  TEST(ArithmeticOpcode, _##code##_Less_Register) {                           \
+    ASSERT_FLAGS_FOR_LOWER_REGISTER_AFTER_OPCODE(reg_name, 0x52, 0x61, code); \
+  }
 
 TEST_FOR_ALL_CONDITIONS_WITH_OPCODE_COMPARING_BETWEEN_MEMORY_AND(CMP, ac)
 TEST_FOR_ALL_CONDITIONS_WITH_OPCODE_COMPARING_BETWEEN_MEMORY_AND(CPX, x)

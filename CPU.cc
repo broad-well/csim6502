@@ -2,14 +2,14 @@
 // Created by Michael Peng on 4/26/18.
 //
 
-#include <cstring>
 #include "CPU.hh"
+#include <cstring>
 #include "Util.hh"
 
-using std::string;
-using std::ostream;
 using std::cout;
+using std::ostream;
 using std::overflow_error;
+using std::string;
 using std::underflow_error;
 
 constexpr byte kStackFirst(0xFF);
@@ -24,9 +24,8 @@ byte StatusFlags::ToByte() const {
   return out;
 }
 
-void StatusFlags::Clear() {
-  memset(this, 0, sizeof(StatusFlags));
-}
+void StatusFlags::Clear() { memset(this, 0, sizeof(StatusFlags)); }
+
 string StatusFlags::ToString() const {
   using namespace std;
 
@@ -43,34 +42,31 @@ string StatusFlags::ToString() const {
   return stream.str();
 }
 
-CPU::CPU(RAM* memory) :
-    x(0), y(0), ac(0), sp(kStackFirst), pc(0),
-    status(), memory(memory) {
-
+CPU::CPU(RAM *memory)
+    : x(0), y(0), ac(0), sp(kStackFirst), pc(0), status(), memory(memory) {
   status.Clear();
 }
 
 void CPU::UpdateFlagsFor(const byte new_value) {
-  status.zero_result = new_value==0;
+  status.zero_result = new_value == 0;
   status.negative_result = new_value >= 0b10000000;
 }
 
-void CPU::JumpRelative(const signed_byte offset) {
-  pc += offset;
-}
+void CPU::JumpRelative(const signed_byte offset) { pc += offset; }
 
 void CPU::DumpRegisterInfo(ostream &out) const {
   char out_str[38];
 
-  sprintf(out_str, "X=%02X Y=%02X A=%02X\nSP=%02X PC=%04X\n%s",
-      x, y, ac, sp, pc, status.ToString().c_str());
+  sprintf(out_str, "X=%02X Y=%02X A=%02X\nSP=%02X PC=%04X\n%s", x, y, ac, sp,
+          pc, status.ToString().c_str());
 
   out << out_str;
 }
 
 void CPU::IncrementProgramCounter() {
   if (pc == 0xffff)
-    throw overflow_error("Incrementing Program Counter (PC) at 0xffff causes overflow");
+    throw overflow_error(
+        "Incrementing Program Counter (PC) at 0xffff causes overflow");
   ++pc;
 }
 
@@ -81,15 +77,12 @@ byte CPU::NextCodeByte() {
 }
 
 word CPU::NextOperandWord() {
-  byte low(NextCodeByte()),
-    high(NextCodeByte());
+  byte low(NextCodeByte()), high(NextCodeByte());
 
   return bit::AsWord(low, high);
 }
 
-word AddressAtStackPtr(const byte ptr_value) {
-  return 0x100 + ptr_value;
-}
+word AddressAtStackPtr(const byte ptr_value) { return 0x100 + ptr_value; }
 
 void CPU::PushByteToStack(byte value) {
   if (sp == kStackLast)
@@ -99,8 +92,7 @@ void CPU::PushByteToStack(byte value) {
 }
 
 void CPU::PushWordToStack(word value) {
-  byte low(bit::LowByte(value)),
-      high(bit::HighByte(value));
+  byte low(bit::LowByte(value)), high(bit::HighByte(value));
 
   PushByteToStack(high);
   PushByteToStack(low);
@@ -113,8 +105,7 @@ byte CPU::PullByteFromStack() {
   return memory->Read(AddressAtStackPtr(++sp));
 }
 word CPU::PullWordFromStack() {
-  byte low(PullByteFromStack()),
-      high(PullByteFromStack());
+  byte low(PullByteFromStack()), high(PullByteFromStack());
 
   return bit::AsWord(low, high);
 }

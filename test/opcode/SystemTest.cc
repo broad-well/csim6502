@@ -2,14 +2,12 @@
 // Created by Michael Peng on 5/3/18.
 //
 
-#include "opcode/System.hh"
 #include "../MockRAM.hh"
+#include "opcode/System.hh"
 
 #include <gtest/gtest.h>
 
-static MockRAM ram {
-  0xfa, 0x1d, 0xad, 0x14, 0xca, 0xb6, 0xbf, 0x3a
-};
+static MockRAM ram{0xfa, 0x1d, 0xad, 0x14, 0xca, 0xb6, 0xbf, 0x3a};
 static CPU cpu(&ram);
 
 TEST(SystemOpcode, BRK) {

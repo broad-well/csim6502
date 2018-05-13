@@ -12,8 +12,11 @@ OPCODE_SET {
 
 NILADIC_OPCODE(NOP);
 NILADIC_OPCODE(BRK);
+
+[[noreturn]]
 NILADIC_OPCODE(Illegal);
 
+[[noreturn]]
 NILADIC_OPCODE(EXIT);
 
 }

@@ -2,19 +2,17 @@
 // Created by Michael Peng on 5/2/18.
 //
 
-#include "opcode/AddressingModes.hh"
-#include "CPU.hh"
-#include "../MockRAM.hh"
-#include <exception>
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <gtest/gtest.h>
+#include <exception>
+#include "../MockRAM.hh"
+#include "CPU.hh"
+#include "opcode/AddressingModes.hh"
 
 using namespace ::testing;
 using namespace address;
 
-static MockRAM ram {
-  0x41, 0x13, 0x53, 0xfc, 0xc2, 0x00, 0x9f, 0x3b
-};
+static MockRAM ram{0x41, 0x13, 0x53, 0xfc, 0xc2, 0x00, 0x9f, 0x3b};
 static CPU cpu(&ram);
 
 TEST(AddressingMode, Immediate) {
@@ -25,7 +23,7 @@ TEST(AddressingMode, Immediate) {
   cpu.pc = 0x00;
 }
 
-TEST(AddressingMode, Accumulator){
+TEST(AddressingMode, Accumulator) {
   cpu.ac = 0x3d;
   ASSERT_EQ(Accum.Read(cpu), 0x3d);
 
@@ -117,7 +115,8 @@ TEST(AddressingMode, ZeroPageIndexed) {
   ram.Write(0x18, 0xcf);
   ASSERT_EQ(ZpgY.Read(cpu), 0xcf);
 
-  // Well known bug: zero page indexed will not cross the page boundary when PC+X or PC+Y overflows
+  // Well known bug: zero page indexed will not cross the page boundary when
+  // PC+X or PC+Y overflows
   cpu.x = 0xff;
   ZpgX.Write(cpu, 0xae);
   ASSERT_EQ(ram.Read(0x52), 0xae);
@@ -141,14 +140,14 @@ TEST(AddressingMode, XIndexedIndirect) {
 
   cpu.pc = 0x00;
   cpu.x = 0x1d;
-  ram.WriteWord(word {0x41 + 0x1d}, 0x1441);
+  ram.WriteWord(word{0x41 + 0x1d}, 0x1441);
   XInd.Write(cpu, 0xd8);
   ASSERT_EQ(ram.Read(0x1441), 0xd8);
 
   cpu.pc = 0x4f;
   cpu.x = 0xff;
   ram.Write(0x4f, 0x00);
-  ram.WriteWord(0xff, 0xac23); // Across page boundaries
+  ram.WriteWord(0xff, 0xac23);  // Across page boundaries
   XInd.Write(cpu, 0x89);
   ASSERT_EQ(ram.Read(0xac23), 0x89);
 
@@ -165,7 +164,7 @@ TEST(AddressingMode, IndirectYIndexed) {
   ++cpu.y;
   ram.WriteWord(0x13, 0x614f);
   IndY.Write(cpu, 0x69);
-  ASSERT_EQ(ram.Read(word {0x614f + 0x03}), 0x69);
+  ASSERT_EQ(ram.Read(word{0x614f + 0x03}), 0x69);
 
   cpu.pc = 0x00;
   cpu.y = 0x00;

@@ -8,27 +8,26 @@
 
 #include "opcode/Jump.hh"
 
-static MockRAM ram {
-  0x02, 0x00, 0xda, 0x2c, 0x63, 0x8b, 0xaf, 0xf5
-};
+static MockRAM ram{0x02, 0x00, 0xda, 0x2c, 0x63, 0x8b, 0xaf, 0xf5};
 static CPU cpu(&ram);
 
 static constexpr word kStartPc(0x2121);
 
-#define ASSERT_OPCODE_BRANCHES_ON_FLAG_BEING(code, flag, branch_condition) TEST(JumpOpcode, code) { \
-  cpu.Reset(); \
-  cpu.pc = kStartPc; \
-  ram.Write(kStartPc, 0xa4); \
-\
-  cpu.status.flag = branch_condition; \
-  opcode::code(cpu); \
-  ASSERT_EQ(cpu.pc, kStartPc - 91); \
-\
-  cpu.pc = kStartPc; \
-  cpu.status.flag = !(branch_condition); \
-  opcode::code(cpu); \
-  ASSERT_EQ(cpu.pc, kStartPc); \
-}
+#define ASSERT_OPCODE_BRANCHES_ON_FLAG_BEING(code, flag, branch_condition) \
+  TEST(JumpOpcode, code) {                                                 \
+    cpu.Reset();                                                           \
+    cpu.pc = kStartPc;                                                     \
+    ram.Write(kStartPc, 0xa4);                                             \
+                                                                           \
+    cpu.status.flag = branch_condition;                                    \
+    opcode::code(cpu);                                                     \
+    ASSERT_EQ(cpu.pc, kStartPc - 91);                                      \
+                                                                           \
+    cpu.pc = kStartPc;                                                     \
+    cpu.status.flag = !(branch_condition);                                 \
+    opcode::code(cpu);                                                     \
+    ASSERT_EQ(cpu.pc, kStartPc);                                           \
+  }
 
 ASSERT_OPCODE_BRANCHES_ON_FLAG_BEING(BCS, carry, true)
 ASSERT_OPCODE_BRANCHES_ON_FLAG_BEING(BCC, carry, false)

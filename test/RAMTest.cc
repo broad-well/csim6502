@@ -2,42 +2,38 @@
 // Created by Michael Peng on 4/30/18.
 //
 
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include "MockRAM.hh"
+#include <gtest/gtest.h>
 #include "HeapRAM.hh"
+#include "MockRAM.hh"
 #include "types.hh"
 
 using namespace ::testing;
 
-static MockRAM ram {
-  0x4f, 0x1d, 0xe3, 0xb5, 0x4e, 0xfa, 0xa1, 0xfe
-};
+static MockRAM ram{0x4f, 0x1d, 0xe3, 0xb5, 0x4e, 0xfa, 0xa1, 0xfe};
 
 constexpr word kAddressRangeMin = 0x05;
 constexpr word kAddressRangeMax = 0x07;
 
 class MockHook : public Hook {
-  public:
-
+ public:
   bool ShouldAddressAccessRedirect(word address) const override {
     return address >= kAddressRangeMin && address <= kAddressRangeMax;
   }
 
-  MOCK_CONST_METHOD2(OnRead, byte(RAM& caller, word address));
-  MOCK_CONST_METHOD3(OnWrite, void(RAM& caller, word address, byte value));
+  MOCK_CONST_METHOD2(OnRead, byte(RAM &caller, word address));
+  MOCK_CONST_METHOD3(OnWrite, void(RAM &caller, word address, byte value));
 };
 
 class TransparentHook : public Hook {
-  public:
-
+ public:
   bool ShouldAddressAccessRedirect(word address) const override {
     return address >= kAddressRangeMin && address <= kAddressRangeMax;
   }
-  byte OnRead(RAM& caller, word address) const override {
+  byte OnRead(RAM &caller, word address) const override {
     return loadFrom(caller, address);
   }
-  void OnWrite(RAM& caller, word address, byte value) const override {
+  void OnWrite(RAM &caller, word address, byte value) const override {
     storeTo(caller, address, value);
   }
 };
@@ -77,4 +73,6 @@ TEST(RAM, DirectStoreLoad) {
   ram.Write(0x02, 0x04);
   ASSERT_EQ(ram.Read(0x02), 0x04);
   ASSERT_EQ(ram.Read(0x04), 0x4e);
+
+  ram.ClearHooks();
 }
