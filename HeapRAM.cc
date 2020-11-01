@@ -1,6 +1,7 @@
 #include "HeapRAM.hh"
 #include <cstring>
 #include <string>
+#include <stdexcept>
 
 using namespace std;
 

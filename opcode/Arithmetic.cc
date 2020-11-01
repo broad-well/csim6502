@@ -101,7 +101,7 @@ OPCODE_SET {
 #define OPCODE_COMPARES_THIS_WITH_MEMORY(code, register_name)                \
   MONADIC_OPCODE(code) {                                                     \
     const auto operand(mode.Read(cpu));                                      \
-    const auto result(static_cast<const byte>(cpu.register_name - operand)); \
+    const auto result(static_cast<byte>(cpu.register_name - operand)); \
                                                                              \
     cpu.UpdateFlagsFor(result);                                              \
     cpu.status.carry = operand <= cpu.register_name;                         \

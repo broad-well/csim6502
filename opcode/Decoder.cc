@@ -15,11 +15,13 @@ using namespace address;
 
 // Non-standard opcodes:
 //  - FF = Exit emulator
+//  - 0F = Dump registers
+//  - 1F = Print A in decimal
 
 const std::shared_ptr<Executor> kInstructionTable[] {
     // 0          1            2            3        4            5           6            7        8       9             A             B        C           D            E            F
-    N(BRK),       M(ORA,XInd), ILLEGAL,     ILLEGAL, ILLEGAL,     M(ORA,Zpg), M(ASL,Zpg),  ILLEGAL, N(PHP), M(ORA,Immed), M(ASL,Accum), ILLEGAL, ILLEGAL,    M(ORA,Abs),  M(ASL,Abs),  ILLEGAL,
-    N(BPL),       M(ORA,IndY), ILLEGAL,     ILLEGAL, ILLEGAL,     M(ORA,ZpgX),M(ASL,ZpgX), ILLEGAL, N(CLC), M(ORA,AbsY),  ILLEGAL,      ILLEGAL, ILLEGAL,    M(ORA,AbsX), M(ASL,AbsX), ILLEGAL,
+    N(BRK),       M(ORA,XInd), ILLEGAL,     ILLEGAL, ILLEGAL,     M(ORA,Zpg), M(ASL,Zpg),  ILLEGAL, N(PHP), M(ORA,Immed), M(ASL,Accum), ILLEGAL, ILLEGAL,    M(ORA,Abs),  M(ASL,Abs),  N(DMP),
+    N(BPL),       M(ORA,IndY), ILLEGAL,     ILLEGAL, ILLEGAL,     M(ORA,ZpgX),M(ASL,ZpgX), ILLEGAL, N(CLC), M(ORA,AbsY),  ILLEGAL,      ILLEGAL, ILLEGAL,    M(ORA,AbsX), M(ASL,AbsX), N(PTA),
     N(JSR),       M(AND,XInd), ILLEGAL,     ILLEGAL, M(BIT,Zpg),  M(AND,Zpg), M(ROL,Zpg),  ILLEGAL, N(PLP), M(AND,Immed), M(ROL,Accum), ILLEGAL, M(BIT,Abs), M(AND,Abs),  M(ROL,Abs),  ILLEGAL,
     N(BMI),       M(AND,IndY), ILLEGAL,     ILLEGAL, ILLEGAL,     M(AND,ZpgX),M(ROL,ZpgX), ILLEGAL, N(SEC), M(AND,AbsY),  ILLEGAL,      ILLEGAL, ILLEGAL,    M(AND,AbsX), M(ROL,AbsX), ILLEGAL,
     N(RTI),       M(EOR,XInd), ILLEGAL,     ILLEGAL, ILLEGAL,     M(EOR,Zpg), M(LSR,Zpg),  ILLEGAL, N(PHA), M(EOR,Immed), M(LSR,Accum), ILLEGAL, N(JMP_Abs), M(EOR,Abs),  M(LSR,Abs),  ILLEGAL,
